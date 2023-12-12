@@ -1,0 +1,40 @@
+PTALang {
+	Query = SelectKey FilterClause*
+    
+    FilterClause = FilterKey Operator? identifier?
+    
+    SelectKey = BALANCE | TRANSACTION
+    FilterKey = ACCOUNT | DATE | STRUCTURE
+    
+    Operator = eq | lt | gt | lte | gte | neq | multiple | exclude | current | last
+    
+    BALANCE     = "balance"
+  TRANSACTION = "transaction"
+  AND         = "and"
+  OR          = "or"
+  ACCOUNT = "account"
+  DATE = "date"
+  STRUCTURE = "structure"
+  // Identifier (table or column names)
+  identifier  = (~newline any)*
+  // Literals
+  string      = "\"" (~"\"" any)* "\""
+  number      = digit+
+  // Operators
+  eq          = "="
+  neq         = "!="
+  lt          = "<"
+  gt          = ">"
+  lte         = "<="
+  gte         = ">="
+  multiple    = "multiple"
+  exclude     = "exclude"
+  current     = "current"
+  last        = "last"
+  // Punctuation
+  comma       = ","
+  colon       = ":"
+  semicolon   = ";"
+  newline     = "\n"
+
+}
