@@ -1,43 +1,42 @@
-import { PopoverSuggest } from "obsidian";
+import { AbstractInputSuggest } from "obsidian";
+import { Controller } from "src/models/controller";
 
-const ALL_BOOKS = [
-	{
-		title: "How to Take Smart Notes",
-		author: "Sönke Ahrens",
-	},
-	{
-		title: "Thinking, Fast and Slow",
-		author: "Daniel Kahneman",
-	},
-	{
-		title: "Deep Work",
-		author: "Cal Newport",
-	},
-];
+export class FileSuggest extends AbstractInputSuggest<string> {
+	textInputEl: HTMLInputElement;
+	controller: Controller;
 
-export class ExampleModal extends PopoverSuggest<any> {
-	getSuggestions() {
-		return this.app.vault.getMarkdownFiles();
+	constructor(
+		app: any,
+		textInputEl: HTMLInputElement,
+		controller: Controller
+	) {
+		super(app, textInputEl);
+		this.textInputEl = textInputEl;
+		this.controller = controller;
 	}
 
-	open() {
-		console.log("opne called");
-		super.open();
+	getSuggestions(inputStr: string): string[] {
+		return [...this.controller.accounts].filter((account) =>
+			account.toLowerCase().contains(inputStr.toLowerCase())
+		);
 	}
 
-	renderSuggestion(value: any, el: HTMLElement) {
-		el.appendText(value.name);
+	renderSuggestion(account: string, el: HTMLElement) {
+		el.setText(account);
 	}
 
-	selectSuggestion(value: any, evt: MouseEvent | KeyboardEvent) {
-		console.log("selectSuggestion", value);
+	selectSuggestion(account: string) {
+		this.textInputEl.value = account;
+		this.textInputEl.trigger("input");
+		this.close();
 	}
 }
 
 export function createTransactionForm(
 	el: HTMLElement,
 	onSubmit: Function,
-	app: any
+	app: any,
+	controller: Controller
 ): void {
 	const form = document.createElement("form");
 	form.className = "max-w-md mx-auto p-4 bg-transparent shadow-md rounded-md";
@@ -88,10 +87,7 @@ export function createTransactionForm(
 		accountInput.className =
 			"accountInput mt-1 p-2 block w-full rounded-md border-gray-300";
 
-		const modal = new ExampleModal(app);
-		accountInput.addEventListener("focus", (event) => {
-			modal.open();
-		});
+		new FileSuggest(app, accountInput, controller);
 
 		accountLabel.appendChild(accountInput);
 		const amountLabel = document.createElement("label");

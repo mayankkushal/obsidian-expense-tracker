@@ -1,6 +1,7 @@
 import { App, Modal, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { parser as ptaLangParser } from "src/parser/ptaLangParser";
 import { parser } from "src/parser/ptaParser";
+import { PTA } from "./models/pta";
 import { createTransactionForm } from "./ui/TransactionForm";
 
 interface PtaPluginSettings {
@@ -42,11 +43,7 @@ export default class PtaPlugin extends Plugin {
 				const query = ptaLangParser(source.trim());
 				const { vault } = this.app;
 
-				const ledger: any = vault.getAbstractFileByPath(
-					this.settings.ledgerPath
-				);
-
-				const ledgerContent = await vault.cachedRead(ledger);
+				const ledgerContent = await new PTA(this).cachedReadLedger();
 				const controller = parser(ledgerContent);
 
 				query.setController(controller);
@@ -104,19 +101,21 @@ class TransactionModal extends Modal {
 		description: string,
 		accounts: { account?: string; amount?: number }[]
 	) => {
-		const ledger: any = this.app.vault.getAbstractFileByPath(
-			this.plugin.settings.ledgerPath
-		);
-
-		this.app.vault.append(
-			ledger,
+		await new PTA(this.plugin).appendContent(
 			this.formatTransaction(date, description, accounts)
 		);
 	};
 
-	onOpen() {
+	async onOpen() {
 		const { contentEl } = this;
-		createTransactionForm(contentEl, this.handleFormSubmit, this.app);
+		const ledgerContent = await new PTA(this.plugin).cachedReadLedger();
+		const controller = parser(ledgerContent);
+		createTransactionForm(
+			contentEl,
+			this.handleFormSubmit,
+			this.app,
+			controller
+		);
 	}
 
 	onClose() {

@@ -5,6 +5,7 @@ import { Transaction } from "./transaction";
 export class Controller {
 	transactions: Transaction[];
 	accountHierarchy: AccountHierarchy;
+	accounts = new Set<string>();
 
 	constructor() {
 		this.transactions = [];
@@ -13,6 +14,9 @@ export class Controller {
 
 	addTransaction(transaction: Transaction) {
 		this.transactions.push(transaction);
+		transaction.entries.forEach((entry) => {
+			this.accounts.add(entry.accountName);
+		});
 	}
 
 	getTransactions(): Transaction[] {
