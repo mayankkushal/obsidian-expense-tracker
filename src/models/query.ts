@@ -127,8 +127,6 @@ export class TransactionQuery extends Query {
 			);
 		}
 
-		console.log(transactions);
-
 		TransactionView(el, transactions, structure?.value);
 	}
 }

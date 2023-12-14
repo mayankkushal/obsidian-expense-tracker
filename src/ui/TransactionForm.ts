@@ -143,7 +143,7 @@ export function createTransactionForm(
 
 		// Extract values from the form elements
 		const dateValue = dateInput.value;
-		const descriptionValue = descriptionInput?.value || "hello";
+		const descriptionValue = descriptionInput?.value || '""';
 
 		const transactionsData = [];
 		const accountInputs = form.querySelectorAll(".accountInput");
