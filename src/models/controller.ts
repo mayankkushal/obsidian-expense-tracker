@@ -1,4 +1,5 @@
 import { AccountHierarchy } from "./account";
+import { Filter } from "./query";
 import { Transaction } from "./transaction";
 
 export class Controller {
@@ -160,5 +161,54 @@ export class ControllerAnalyzer {
 					entry.amount <= maxAmount
 			)
 		);
+	}
+
+	filterByLimit(
+		transactions: Transaction[],
+		operator: "first" | "last",
+		limit: number
+	): Transaction[] {
+		if (limit <= 0) {
+			return [];
+		}
+
+		if (operator === "first") {
+			return transactions.slice(0, limit);
+		} else if (operator === "last") {
+			return transactions.slice(-limit);
+		}
+
+		return transactions;
+	}
+
+	orderByFields(
+		transactions: Transaction[],
+		sortingCriteria: Filter[]
+	): Transaction[] {
+		return [...transactions].sort((a, b) => {
+			for (const criteria of sortingCriteria) {
+				const valueA = this.getSortValue(a, criteria.value);
+				const valueB = this.getSortValue(b, criteria.value);
+
+				if (valueA < valueB) {
+					return criteria.operator === "asc" ? -1 : 1;
+				} else if (valueA > valueB) {
+					return criteria.operator === "asc" ? 1 : -1;
+				}
+			}
+
+			return 0; // If all criteria are equal, maintain the original order
+		});
+	}
+
+	private getSortValue(transaction: Transaction, field: string): any {
+		switch (field) {
+			case "date":
+				return transaction.date.getTime();
+			case "amount":
+				return transaction.toTotal;
+			default:
+				return null;
+		}
 	}
 }

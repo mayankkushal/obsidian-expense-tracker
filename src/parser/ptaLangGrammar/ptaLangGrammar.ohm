@@ -4,9 +4,9 @@ PTALang {
     FilterClause = FilterKey Operator? identifier?
     
     SelectKey = BALANCE | TRANSACTION
-    FilterKey = ACCOUNT | DATE | STRUCTURE
+    FilterKey = ACCOUNT | DATE | STRUCTURE | LIMIT | ORDER
     
-    Operator = eq | lt | gt | lte | gte | neq | multiple | exclude | current | last
+    Operator = eq | lt | gt | lte | gte | neq | multiple | exclude | current | last | first | desc | asc
     
     BALANCE     = "balance"
   TRANSACTION = "transaction"
@@ -15,6 +15,8 @@ PTALang {
   ACCOUNT = "account"
   DATE = "date"
   STRUCTURE = "structure"
+  LIMIT = "limit"
+  ORDER = "order"
   // Identifier (table or column names)
   identifier  = (~newline any)*
   // Literals
@@ -31,6 +33,9 @@ PTALang {
   exclude     = "exclude"
   current     = "current"
   last        = "last"
+  first       = "first"
+  desc        = "desc"
+  asc         = "asc"
   // Punctuation
   comma       = ","
   colon       = ":"

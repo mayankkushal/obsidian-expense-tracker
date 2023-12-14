@@ -24,6 +24,8 @@ export interface PTALangActionDict<T> extends BaseActionDict<T> {
   ACCOUNT?: (this: NonterminalNode, arg0: TerminalNode) => T;
   DATE?: (this: NonterminalNode, arg0: TerminalNode) => T;
   STRUCTURE?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  LIMIT?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  ORDER?: (this: NonterminalNode, arg0: TerminalNode) => T;
   identifier?: (this: NonterminalNode, arg0: IterationNode) => T;
   string?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode, arg2: TerminalNode) => T;
   number?: (this: NonterminalNode, arg0: IterationNode) => T;
@@ -37,6 +39,9 @@ export interface PTALangActionDict<T> extends BaseActionDict<T> {
   exclude?: (this: NonterminalNode, arg0: TerminalNode) => T;
   current?: (this: NonterminalNode, arg0: TerminalNode) => T;
   last?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  first?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  desc?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  asc?: (this: NonterminalNode, arg0: TerminalNode) => T;
   comma?: (this: NonterminalNode, arg0: TerminalNode) => T;
   colon?: (this: NonterminalNode, arg0: TerminalNode) => T;
   semicolon?: (this: NonterminalNode, arg0: TerminalNode) => T;

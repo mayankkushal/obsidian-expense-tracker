@@ -1,14 +1,28 @@
 import { moment } from "obsidian";
-import { Account } from "./account";
+import { BalanceView } from "src/ui/BalanceView";
+import { TransactionView } from "src/ui/TransactionView";
 import { Controller, ControllerAnalyzer } from "./controller";
 
 class Query {
 	controller: Controller;
 	analyzer: ControllerAnalyzer;
+	filters: Filter[];
+
+	constructor(filters: Filter[]) {
+		this.filters = filters;
+	}
 
 	setController(controller: Controller) {
 		this.controller = controller;
 		this.analyzer = new ControllerAnalyzer(controller);
+	}
+
+	getFilter(key: string) {
+		return this.filters.find((f) => f.key === key);
+	}
+
+	getFilters(key: string) {
+		return this.filters.filter((f) => f.key === key);
 	}
 
 	getDateRange(filter: Filter): [Date, Date] {
@@ -36,7 +50,7 @@ class Query {
 		return [startDate.toDate(), endDate.toDate()];
 	}
 
-	execute() {}
+	execute(el: HTMLElement) {}
 }
 
 export class Filter {
@@ -52,18 +66,7 @@ export class Filter {
 }
 
 export class BalanceQuery extends Query {
-	filters: Filter[];
-
-	constructor(filters: Filter[]) {
-		super();
-		this.filters = filters;
-	}
-
-	getFilter(key: string) {
-		return this.filters.find((f) => f.key === key);
-	}
-
-	execute(): Account | Account[] | undefined {
+	execute(el: HTMLElement) {
 		const accountName = this.getFilter("account");
 		const date = this.getFilter("date");
 		const structure = this.getFilter("structure");
@@ -89,8 +92,43 @@ export class BalanceQuery extends Query {
 			structure?.value
 		);
 
-		console.log(account);
+		BalanceView(el, account);
+	}
+}
 
-		return account;
+export class TransactionQuery extends Query {
+	execute(el: HTMLElement) {
+		const accountName = this.getFilter("account");
+		const date = this.getFilter("date");
+		const structure = this.getFilter("structure");
+		const limit = this.getFilter("limit");
+		const orders = this.getFilters("order");
+
+		let filters: any = {};
+
+		filters["accountName"] = accountName?.value;
+
+		if (date) {
+			const [startDate, endDate] = this.getDateRange(date);
+			filters = { ...filters, startDate, endDate };
+		}
+
+		let transactions = this.analyzer.filter(filters);
+
+		if (orders.length) {
+			transactions = this.analyzer.orderByFields(transactions, orders);
+		}
+
+		if (limit) {
+			transactions = this.analyzer.filterByLimit(
+				transactions,
+				limit.operator as any,
+				limit.value as any
+			);
+		}
+
+		console.log(transactions);
+
+		TransactionView(el, transactions, structure?.value);
 	}
 }

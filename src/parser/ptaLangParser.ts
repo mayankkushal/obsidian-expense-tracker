@@ -1,4 +1,4 @@
-import { BalanceQuery, Filter } from "src/models/query";
+import { BalanceQuery, Filter, TransactionQuery } from "src/models/query";
 import grammar from "./ptaLangGrammar/ptaLangGrammar.ohm-bundle";
 
 export const parser = (code: string) => {
@@ -17,6 +17,10 @@ export const parser = (code: string) => {
 			switch (selectKey.parse()) {
 				case "balance":
 					return new BalanceQuery(
+						filters.children.map((c: any) => c.parse())
+					);
+				case "transaction":
+					return new TransactionQuery(
 						filters.children.map((c: any) => c.parse())
 					);
 			}

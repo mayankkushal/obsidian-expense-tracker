@@ -1,7 +1,6 @@
 import { App, Modal, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { parser as ptaLangParser } from "src/parser/ptaLangParser";
 import { parser } from "src/parser/ptaParser";
-import { BalanceView } from "./ui/BalanceView";
 import { createTransactionForm } from "./ui/TransactionForm";
 
 interface PtaPluginSettings {
@@ -51,8 +50,7 @@ export default class PtaPlugin extends Plugin {
 				const controller = parser(ledgerContent);
 
 				query.setController(controller);
-				const response = query.execute();
-				BalanceView(el, response);
+				query.execute(el);
 			}
 		);
 	}
