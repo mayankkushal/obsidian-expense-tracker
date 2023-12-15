@@ -1,9 +1,9 @@
 {
 	"id": "obsidian-simple-pta",
-	"name": "Obsidian PTA",
+	"name": "Obsidian Simple PTA",
 	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
+	"description": "Simple plugin to add very simple PTA to Obsidian",
 	"author": "Obsidian",
 	"authorUrl": "https://obsidian.md",
 	"fundingUrl": "https://obsidian.md/pricing",
