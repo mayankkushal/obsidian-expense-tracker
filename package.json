@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-sample-plugin",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"version": "0.0.1",
+	"description": "Simple plugin to add very simple PTA to Obsidian",
 	"main": "main.js",
 	"scripts": {
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
