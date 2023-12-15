@@ -47,7 +47,10 @@ export class ControllerAnalyzer {
 		let filteredTransactions = this.controller.getTransactions();
 
 		if (accountName) {
-			filteredTransactions = this.filterByAccount(accountName);
+			filteredTransactions = this.filterByAccount(
+				accountName,
+				filteredTransactions
+			);
 		}
 
 		if (startDate && endDate) {
@@ -123,17 +126,17 @@ export class ControllerAnalyzer {
 			return workingTransactions;
 		}
 
-		let finalTransactions: Transaction[] = [];
+		let finalTransactions = new Set<Transaction>();
 		const accountRegex = new RegExp(accountName);
 
 		workingTransactions.forEach((transaction) => {
 			transaction.entries.forEach((entry) => {
 				if (accountRegex.test(entry.accountName)) {
-					finalTransactions.push(transaction);
+					finalTransactions.add(transaction);
 				}
 			});
 		});
-		return finalTransactions;
+		return Array.from(finalTransactions);
 	}
 
 	filterByDateRange(
