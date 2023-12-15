@@ -28,11 +28,14 @@ export class Transaction {
 		this.entries = entries;
 
 		this._validate();
+
+		this.getToTotal();
+
+		this._fillAmount();
 	}
 
 	private _validate() {
 		this.validateEntriesAmount();
-		this._fillAmount();
 	}
 
 	private _fillAmount() {

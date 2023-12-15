@@ -1,5 +1,5 @@
 import { Transaction } from "src/models/transaction";
-import { formatDate } from "src/utils/common";
+import { formatCurrency, formatDate } from "src/utils/common";
 import { formatAccountName } from "src/utils/ui";
 
 export const TransactionView = (
@@ -74,22 +74,24 @@ export function createTransactionTable(
 		);
 
 		// Determine if there are multiple accounts for "To Account"
-		toAccountCell.innerHTML =
-			positiveEntries.length > 1
-				? "Multiple accounts"
-				: formatAccountName(positiveEntries[0]?.accountName) ||
-				  "Multiple accounts";
+		toAccountCell.innerHTML = !positiveEntries.length
+			? ""
+			: positiveEntries.length > 1
+			? "Multiple accounts"
+			: formatAccountName(positiveEntries[0]?.accountName) ||
+			  "Multiple accounts";
 
 		// Determine if there are multiple accounts for "From Account"
-		fromAccountCell.innerHTML =
-			negativeEntries.length > 1
-				? "Multiple accounts"
-				: formatAccountName(negativeEntries[0]?.accountName) ||
-				  "Multiple accounts";
+		fromAccountCell.innerHTML = !negativeEntries.length
+			? ""
+			: negativeEntries.length > 1
+			? "Multiple accounts"
+			: formatAccountName(negativeEntries[0]?.accountName) ||
+			  "Multiple accounts";
 
 		// Display the total amount
 		totalCell.textContent =
-			`${transaction.toTotal?.toString()} ${currency}` ||
+			formatCurrency(transaction.toTotal, currency) ||
 			"Multiple accounts";
 
 		row.appendChild(toAccountCell);
@@ -125,8 +127,8 @@ export function createNestedTransactionList(
 
 		const total = document.createElement("div");
 		total.innerHTML = `Total: <span class="font-bold">${
-			transaction.toTotal?.toString() || ""
-		} ${currency}</span>`;
+			formatCurrency(transaction.toTotal, currency) || ""
+		}</span>`;
 		header.appendChild(total);
 
 		li.appendChild(header);
@@ -146,9 +148,10 @@ export function createNestedTransactionList(
 					: "inherit";
 
 			// Create HTML with styled amounts
-			const formattedAmount = `<span class="font-bold ${amountColor}">${
-				entry.amount
-			} ${entry.currency || ""}</span>`;
+			const formattedAmount = `<span class="font-bold ${amountColor}">${formatCurrency(
+				entry.amount ?? 0,
+				currency
+			)}</span>`;
 
 			entryLi.innerHTML = `${formattedAccountName} : ${formattedAmount}`;
 			entriesList.appendChild(entryLi);

@@ -1,4 +1,5 @@
 import { Account } from "src/models/account";
+import { formatCurrency } from "src/utils/common";
 
 function getRandomBorderColor(): string {
 	const colors = [
@@ -26,13 +27,17 @@ export function BalanceView(
 	}
 
 	if (Array.isArray(data)) {
-		flatAccountView(data, el);
+		flatAccountView(data, el, currency);
 	} else {
-		nestedAccountView(data, el);
+		nestedAccountView(data, el, currency);
 	}
 }
 
-function flatAccountView(data: Account[], el: HTMLElement): void {
+function flatAccountView(
+	data: Account[],
+	el: HTMLElement,
+	currency: string
+): void {
 	const table = document.createElement("table");
 	table.className = "min-w-full divide-y divide-gray-200";
 
@@ -61,7 +66,7 @@ function flatAccountView(data: Account[], el: HTMLElement): void {
 
 		const balanceCell = document.createElement("td");
 		balanceCell.className = "px-6 py-4 whitespace-nowrap";
-		balanceCell.textContent = bank.balance.toString();
+		balanceCell.textContent = formatCurrency(bank.balance, currency);
 		row.appendChild(balanceCell);
 
 		const creationDateCell = document.createElement("td");
@@ -81,12 +86,21 @@ function flatAccountView(data: Account[], el: HTMLElement): void {
 	el.appendChild(table);
 }
 
-const nestedAccountView = (data: Account, el: HTMLElement) => {
+const nestedAccountView = (
+	data: Account,
+	el: HTMLElement,
+	currency: string
+) => {
 	const container = document.createElement("div");
 	container.className = `border-l-2 ${getRandomBorderColor()} border-dotted p-1 mb-3`;
 
 	container.innerHTML = `
-		<div><span class="text-lg font-bold" style="color: var(--text-success);">${data.name}</span> - <span class="text-base" style="color: var(--text-accent)"> ${data.balance}</span></div>
+		<div><span class="text-lg font-bold" style="color: var(--text-success);">${
+			data.name
+		}</span> - <span class="text-base" style="color: var(--text-accent)"> ${formatCurrency(
+		data.balance,
+		currency
+	)}</span></div>
 		`;
 
 	el.appendChild(container);
@@ -97,7 +111,7 @@ const nestedAccountView = (data: Account, el: HTMLElement) => {
 		container.appendChild(childrenContainer);
 
 		for (const child of data.children) {
-			BalanceView(childrenContainer, child);
+			BalanceView(childrenContainer, child, currency);
 		}
 	}
 };

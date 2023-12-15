@@ -9,3 +9,12 @@ export const formatDate = (date: Date): string => {
 		day: "numeric",
 	});
 };
+
+// Method to format number to currency
+export const formatCurrency = (value: number, currency: string): string => {
+	const formatter = new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency,
+	});
+	return formatter.format(value);
+};
