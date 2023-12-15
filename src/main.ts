@@ -6,10 +6,12 @@ import { createTransactionForm } from "./ui/TransactionForm";
 
 interface PtaPluginSettings {
 	ledgerPath: string;
+	currency: string;
 }
 
 const DEFAULT_SETTINGS: PtaPluginSettings = {
 	ledgerPath: "Ledger.md",
+	currency: "INR",
 };
 
 export default class PtaPlugin extends Plugin {
@@ -47,7 +49,7 @@ export default class PtaPlugin extends Plugin {
 				const controller = parser(ledgerContent);
 
 				query.setController(controller);
-				query.execute(el);
+				query.execute(el, this);
 			}
 		);
 	}
@@ -82,12 +84,14 @@ class TransactionModal extends Modal {
 	): string {
 		let output = `${date} "${description}"\n`;
 
+		const { currency } = this.plugin.settings;
+
 		for (const { account, amount } of accounts) {
 			if (account) {
 				output += ` ${account}`;
 
 				if (amount) {
-					output += ` ${amount}INR`;
+					output += ` ${amount}${currency}`;
 				}
 			}
 			output += "\n";
@@ -143,6 +147,16 @@ class PtaSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.ledgerPath)
 				.onChange(async (value) => {
 					this.plugin.settings.ledgerPath = value;
+					await this.plugin.saveSettings();
+				})
+		);
+
+		new Setting(containerEl).setName("Currency").addText((text) =>
+			text
+				.setPlaceholder("INR")
+				.setValue(this.plugin.settings.currency)
+				.onChange(async (value) => {
+					this.plugin.settings.currency = value;
 					await this.plugin.saveSettings();
 				})
 		);

@@ -5,21 +5,23 @@ import { formatAccountName } from "src/utils/ui";
 export const TransactionView = (
 	el: HTMLElement,
 	data: Transaction[],
-	structure: string = "flat"
+	structure: string = "flat",
+	currency: string = ""
 ) => {
 	switch (structure) {
 		case "flat":
-			createTransactionTable(el, data);
+			createTransactionTable(el, data, currency);
 			break;
 		case "nested":
-			createNestedTransactionList(el, data);
+			createNestedTransactionList(el, data, currency);
 			break;
 	}
 };
 
 export function createTransactionTable(
 	el: HTMLElement,
-	data: Transaction[]
+	data: Transaction[],
+	currency: string
 ): void {
 	const table = document.createElement("table");
 	table.className = "min-w-full divide-y divide-gray-200";
@@ -87,7 +89,8 @@ export function createTransactionTable(
 
 		// Display the total amount
 		totalCell.textContent =
-			transaction.toTotal?.toString() || "Multiple accounts";
+			`${transaction.toTotal?.toString()} ${currency}` ||
+			"Multiple accounts";
 
 		row.appendChild(toAccountCell);
 		row.appendChild(fromAccountCell);
@@ -102,7 +105,8 @@ export function createTransactionTable(
 
 export function createNestedTransactionList(
 	el: HTMLElement,
-	data: Transaction[]
+	data: Transaction[],
+	currency: string
 ): void {
 	const ul = document.createElement("ul");
 	ul.className = "list-none p-0";
@@ -122,7 +126,7 @@ export function createNestedTransactionList(
 		const total = document.createElement("div");
 		total.innerHTML = `Total: <span class="font-bold">${
 			transaction.toTotal?.toString() || ""
-		} INR</span>`;
+		} ${currency}</span>`;
 		header.appendChild(total);
 
 		li.appendChild(header);

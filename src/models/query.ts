@@ -1,4 +1,5 @@
 import { moment } from "obsidian";
+import PtaPlugin from "src/main";
 import { BalanceView } from "src/ui/BalanceView";
 import { TransactionView } from "src/ui/TransactionView";
 import { Controller, ControllerAnalyzer } from "./controller";
@@ -80,11 +81,11 @@ class Query {
 		return [startDate.toDate(), endDate.toDate()];
 	}
 
-	execute(el: HTMLElement) {}
+	execute(el: HTMLElement, plugin: PtaPlugin) {}
 }
 
 export class BalanceQuery extends Query {
-	execute(el: HTMLElement) {
+	execute(el: HTMLElement, plugin: PtaPlugin) {
 		const accountName = this.getFilter("account");
 		const date = this.getFilter("date");
 		const structure = this.getFilter("structure");
@@ -110,12 +111,12 @@ export class BalanceQuery extends Query {
 			structure?.value
 		);
 
-		BalanceView(el, account);
+		BalanceView(el, account, plugin.settings.currency);
 	}
 }
 
 export class TransactionQuery extends Query {
-	execute(el: HTMLElement) {
+	execute(el: HTMLElement, plugin: PtaPlugin) {
 		const accountName = this.getFilter("account");
 		const date = this.getFilter("date");
 		const structure = this.getFilter("structure");
@@ -145,6 +146,11 @@ export class TransactionQuery extends Query {
 			);
 		}
 
-		TransactionView(el, transactions, structure?.value);
+		TransactionView(
+			el,
+			transactions,
+			structure?.value,
+			plugin.settings.currency
+		);
 	}
 }

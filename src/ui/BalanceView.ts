@@ -15,7 +15,11 @@ function getRandomBorderColor(): string {
 	return colors[randomIndex];
 }
 
-export function BalanceView(el: HTMLElement, data?: Account | Account[]): void {
+export function BalanceView(
+	el: HTMLElement,
+	data?: Account | Account[],
+	currency: string = ""
+): void {
 	if (data === undefined) {
 		el.innerText = "No Data";
 		return;
