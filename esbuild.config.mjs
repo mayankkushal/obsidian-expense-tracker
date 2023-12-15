@@ -15,7 +15,7 @@ const context = await esbuild.context({
 	banner: {
 		js: banner,
 	},
-	entryPoints: ["src/main.ts", "src/styles.css"],
+	entryPoints: ["src/main.ts"],
 	bundle: true,
 	external: [
 		"obsidian",
@@ -33,7 +33,7 @@ const context = await esbuild.context({
 		"@lezer/lr",
 		...builtins,
 	],
-	outdir: ".",
+	outfile: "main.js",
 	format: "cjs",
 	target: "es2018",
 	logLevel: "info",
