@@ -22,8 +22,8 @@ export default class PtaPlugin extends Plugin {
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon(
-			"dice",
-			"Sample Plugin",
+			"receipt",
+			"Add Transaction",
 			async (evt: MouseEvent) => {
 				new TransactionModal(this.app, this).open();
 			}
