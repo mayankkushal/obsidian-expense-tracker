@@ -37,6 +37,8 @@ export interface PTAActionDict<T> extends BaseActionDict<T> {
   dash?: (this: NonterminalNode, arg0: TerminalNode) => T;
   newline?: (this: NonterminalNode, arg0: TerminalNode) => T;
   decimal?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  comment?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode, arg2: TerminalNode) => T;
+  space?: (this: NonterminalNode, arg0: NonterminalNode | TerminalNode) => T;
 }
 
 export interface PTASemantics extends Semantics {

@@ -35,4 +35,7 @@ PTA {
     dash = "-"
     newline = "\n"
     decimal = "."
+    comment = "<" (~">" any)* ">"
+    
+    space += comment
 }
