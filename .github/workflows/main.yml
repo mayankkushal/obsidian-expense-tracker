@@ -26,15 +26,15 @@ jobs:
             - name: Move manifest file
               run: |
                   cp ./manifest.json ./public/manifest.json
-                  
+
             - name: Archive Release
               uses: thedoctor0/zip-release@0.7.5
               with:
-                type: 'zip'
-                filename: 'obsidian-simple-pta.zip'
-                directory: ./public
+                  type: "zip"
+                  filename: "obsidian-simple-pta.zip"
+                  directory: ./public
 
             - name: Generate release
-            - uses: ncipollo/release-action@v1
+              uses: ncipollo/release-action@v1
               with:
-                artifacts: "obsidian-simple-pta.zip"
+                  artifacts: "obsidian-simple-pta.zip"
