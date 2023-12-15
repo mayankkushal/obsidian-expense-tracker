@@ -23,10 +23,6 @@ jobs:
                   npm run build:esbuild
                   npm run build:css
 
-            - uses: "marvinpinto/action-automatic-releases@latest"
+            - uses: ncipollo/release-action@v1
               with:
-                  repo_token: "${{ secrets.GITHUB_TOKEN }}"
-                  files: |
-                      manifest.json
-                      public/main.js
-                      public/styles.css
+                artifacts: "manifest.json,public/main.js,public/styles.css"
