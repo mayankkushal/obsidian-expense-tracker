@@ -1,96 +1,142 @@
-# Obsidian Sample Plugin
+# Obsidian Simple PTA
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+Welcome to Simple PTA, your personal finance tracker within Obsidian!
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+## Transaction
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+### Structure of Transactions
+Simple PTA uses a simple, text-based format for recording transactions. Each transaction consists of three parts:
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+1. **Date**: The date of the transaction, written in the format YYYY-MM-DD.
+2. **Description**: A short description of the transaction.
+3. **Accounts and Amounts**: A list of accounts involved in the transaction and their respective amounts.
 
-## First time developing plugins?
+A transaction entry follows the format:
+```plaintext
+<date> "<description>"
+<space><account> <amount><currency>
+<space><account> <amount><currency>
+...
+<space><account>
+```
+**Breakdown:**
 
-Quick starting guide for new plugin devs:
+- 2023-12-10: The date of the transaction.
+- "Lunch": A short description of the transaction.
+- Expenses:Food:Lunch 110.00INR: This specifies the account used (Expenses:Food:Lunch) and the amount spent (110.00INR).
+- Assets:Bank:HDFC: This specifies the account that money was sent from.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
 
-## Releasing new releases
+> [!NOTE] 
+> - The amount and currency are optional for the last account. It is automatically calculated as the negative of the sum of all positive amounts listed.
+> - You can create custom accounts and sub-accounts to categorize your finances.
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### Recording Transactions
+Simple PTA offers two convenient ways to record your transactions:
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+1. Adding directly in the ledger.md file:
 
-## Adding your plugin to the community plugin list
+   - Open your ledger file in Obsidian.
+   - Follow the transaction structure outlined in the previous section:
+     - Date (YYYY-MM-DD)
+     - Description
+     - Accounts (separated by spaces)
+     - Amounts (optional for last account, calculated automatically)
 
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+   Example:
 
-## How to use
+   ```2023-12-14 "Movie Ticket"
+     Expenses:Entertainment:Movie 150 INR
+     Assets:Bank:ICICI
+   ```
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+2. Using the transaction modal:
 
-## Manually installing the plugin
+   - Click the Simple PTA button on the Obsidian ribbon menu.
+   - This opens the transaction modal where you can easily enter the details.
+   - Click "Submit" to record the transaction.
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+> [!TIP]
+> You can create a shortcut on your mobile device to directly open the transaction modal. Use the Obsidian URI `obsidian://simple-pta` when creating the shortcut.
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+### Example
+```plaintext
+2023-12-10 "Lunch"
+ Expenses:Food:Lunch 110.00INR
+ Assets:Bank:HDFC
 
-## Funding URL
+2023-12-09 "Dinner"
+ Expenses:Food:Dinner 150.00INR
+ Assets:Bank:HDFC
 
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
 ```
 
-If you have multiple URLs, you can also do:
+## Simple PTA Query Language
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
+### Structure and Syntax
+
+```
+selectKey filterClause*
 ```
 
-## API Documentation
+- selectKey: Defines the desired output. Choose balance to explore account balances, or transaction to delve into transaction details.
+- filterClause (optional, multiple allowed): Refines the data based on specific criteria. Each clause consists of:
+  - filterKey: Identifies the aspect to filter (e.g., account, date, structure).
+  - operator: 
+  - value: Provides the details to compare against. Allowed values differ for each filterKey.
 
-See https://github.com/obsidianmd/obsidian-api
+
+#### Valid filers for balance query:
+
+| Filter Key | Operator      | Value                                    |
+|------------|---------------|------------------------------------------|
+| account    |               | Regex of account name ex: Expense:Food.* |
+| date       | last, current | day, week, month, year                   |
+| structure  |               | flat, nested                             |
+
+> [!NOTE]
+> account is required for balance queries
+
+#### Valid filers for transaction query:
+
+| Filter Key | Operator      | Value                                    |
+|------------|---------------|------------------------------------------|
+| account    |               | Regex of account name ex: Expense:Food.* |
+| date       | last, current | day, week, month, year                   |
+| structure  |               | flat, nested                             |
+| limit      | first, last   | <number>                                 |
+| order      | asc, desc     | amount, date                             |
+
+### Examples
+
+````
+```pta
+balance
+account *
+structure flat
+```
+````
+This gives balance for all the root level accounts in a flat structure
+
+````
+```pta
+balance
+account Expenses.Food.*
+date current month
+structure nested
+```
+````
+This gives balance for all the sub-accounts of Expenses:Food in a nested structure
+
+
+````
+```pta
+transaction
+date current month
+structure nested
+order asc date
+order desc amount
+limit last 5
+```
+````
+This gives the last 5 transactions in a nested structure, sorted by date in ascending order and amount in the descending order
