@@ -1,40 +1,38 @@
 PTA {
 	Program = Block*
-	Block = transaction
+	Block = Transaction
    
-    transaction = date description entry+
+    Transaction = Date Description Entry+
     
-    date = dashDate | slashDate
-    dashDate = year "-" month "-" day
-    slashDate = year "/" month "/" day
+    
+    Entry = Account price?
+    
+    price = amount currency
+    
+    amount = sign? mainAmount decimalAmount?
+    sign = "-"
+    mainAmount = digit+
+    decimalAmount = decimal digit digit
+    
+    currency = letter letter letter
+    
+    Account = mainAccount subAccount*
+    
+    mainAccount = letter+
+    subAccount = ":" letter+
+    
+    Description = delimiter descriptionBody delimiter
+    descriptionBody = (~delimiter any)*
+    
+    Date =  year dash month dash day
     year = digit digit digit digit
     month = digit digit
     day = digit digit
     
-    description = whitespace delimiter descriptionBody delimiter
-    descriptionBody= (~delimiter any)*
-    
-    entry = entryDelimiter account price?
-    
-    account = mainAccount subAccount*
-    mainAccount = letter+
-    subAccount = ":" letter+
-    
-    
-    price = whitespace+ amount currency    
-    amount = positiveAmount | negativeAmount
-    
-    positiveAmount = amountCombined
-    negativeAmount = "-" amountCombined
-    
-    amountMain = digit+
-    amountDecimal = "."digit digit
-    amountCombined = amountMain amountDecimal?
-    currency = currencyChars
-    currencyChars = letter letter letter
-    
     entryDelimiter = newline whitespace
     delimiter = "\""
     whitespace = " " | "\t"
+    dash = "-"
     newline = "\n"
+    decimal = "."
 }

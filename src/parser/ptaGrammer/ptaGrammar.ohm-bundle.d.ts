@@ -14,32 +14,29 @@ import {
 export interface PTAActionDict<T> extends BaseActionDict<T> {
   Program?: (this: NonterminalNode, arg0: IterationNode) => T;
   Block?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  transaction?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: IterationNode) => T;
-  date?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  dashDate?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode, arg3: TerminalNode, arg4: NonterminalNode) => T;
-  slashDate?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode, arg3: TerminalNode, arg4: NonterminalNode) => T;
+  Transaction?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: IterationNode) => T;
+  Entry?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
+  price?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
+  amount?: (this: NonterminalNode, arg0: IterationNode, arg1: NonterminalNode, arg2: IterationNode) => T;
+  sign?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  mainAmount?: (this: NonterminalNode, arg0: IterationNode) => T;
+  decimalAmount?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
+  currency?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
+  Account?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
+  mainAccount?: (this: NonterminalNode, arg0: IterationNode) => T;
+  subAccount?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode) => T;
+  Description?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
+  descriptionBody?: (this: NonterminalNode, arg0: IterationNode) => T;
+  Date?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode, arg3: NonterminalNode, arg4: NonterminalNode) => T;
   year?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode, arg3: NonterminalNode) => T;
   month?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   day?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
-  description?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode, arg3: NonterminalNode) => T;
-  descriptionBody?: (this: NonterminalNode, arg0: IterationNode) => T;
-  entry?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: IterationNode) => T;
-  account?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
-  mainAccount?: (this: NonterminalNode, arg0: IterationNode) => T;
-  subAccount?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode) => T;
-  price?: (this: NonterminalNode, arg0: IterationNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
-  amount?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  positiveAmount?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  negativeAmount?: (this: NonterminalNode, arg0: TerminalNode, arg1: NonterminalNode) => T;
-  amountMain?: (this: NonterminalNode, arg0: IterationNode) => T;
-  amountDecimal?: (this: NonterminalNode, arg0: TerminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
-  amountCombined?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
-  currency?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  currencyChars?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
   entryDelimiter?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   delimiter?: (this: NonterminalNode, arg0: TerminalNode) => T;
   whitespace?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  dash?: (this: NonterminalNode, arg0: TerminalNode) => T;
   newline?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  decimal?: (this: NonterminalNode, arg0: TerminalNode) => T;
 }
 
 export interface PTASemantics extends Semantics {

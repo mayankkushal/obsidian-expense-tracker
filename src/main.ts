@@ -82,13 +82,13 @@ class TransactionModal extends Modal {
 		description: string,
 		accounts: { account?: string; amount?: number }[]
 	): string {
-		let output = `${date} "${description}"\n`;
+		let output = `\n${date} "${description}"\n`;
 
 		const { currency } = this.plugin.settings;
 
 		for (const { account, amount } of accounts) {
 			if (account) {
-				output += ` ${account}`;
+				output += `${account}`;
 
 				if (amount) {
 					output += ` ${amount}${currency}`;
