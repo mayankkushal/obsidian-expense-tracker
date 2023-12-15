@@ -37,4 +37,4 @@ jobs:
             - name: Generate release
               uses: ncipollo/release-action@v1
               with:
-                  artifacts: "obsidian-simple-pta.zip"
+                  artifacts: "public/obsidian-simple-pta.zip"
