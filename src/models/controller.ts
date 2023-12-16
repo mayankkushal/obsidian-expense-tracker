@@ -1,11 +1,14 @@
 import { AccountHierarchy } from "./account";
 import { Filter } from "./query";
+import { RecurringTransaction, TransactionCreated } from "./recurring";
 import { Transaction } from "./transaction";
 
 export class Controller {
 	transactions: Transaction[];
+	recurringTransactions: RecurringTransaction[] = [];
 	accountHierarchy: AccountHierarchy;
 	accounts = new Set<string>();
+	recurringMap: { [key: string]: RecurringTransaction } = {};
 
 	constructor() {
 		this.transactions = [];
@@ -19,8 +22,41 @@ export class Controller {
 		});
 	}
 
+	addRecurringTransaction(transaction: RecurringTransaction) {
+		this.recurringTransactions.push(transaction);
+		transaction.entries.forEach((entry) => {
+			this.accounts.add(entry.accountName);
+		});
+		this.recurringMap[transaction.description] = transaction;
+	}
+
+	addTransactionCreated(transactionCreated: TransactionCreated) {
+		const transaction = this.recurringMap[transactionCreated.id];
+		if (transaction) {
+			transaction.addTransactionCreated(transactionCreated);
+		}
+	}
+
 	getTransactions(): Transaction[] {
 		return this.transactions;
+	}
+
+	getRecurringTransactions(): RecurringTransaction[] {
+		return this.recurringTransactions;
+	}
+
+	checkRecurringTransactions(
+		onTrue: (transaction: RecurringTransaction, date: Date) => void
+	) {
+		const currentDate = new Date();
+		this.recurringTransactions.forEach((transaction) => {
+			console.log("checking transaction");
+			const valid = transaction.shouldCreateTransaction(currentDate);
+			if (valid && valid.shouldCreate) {
+				console.log("calling onTrue");
+				onTrue(transaction, valid.nextOccurrenceDate);
+			}
+		});
 	}
 }
 

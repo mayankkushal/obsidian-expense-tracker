@@ -1,4 +1,9 @@
 import { Controller } from "src/models/controller";
+import {
+	RecurringTransaction,
+	RepeatClause,
+	TransactionCreated,
+} from "src/models/recurring";
 import { Entry, Transaction } from "src/models/transaction";
 import grammar from "src/parser/ptaGrammer/ptaGrammar.ohm-bundle";
 
@@ -11,6 +16,8 @@ export const parser = (code: string) => {
 		let parsedNode = node.children.map((c: any) => c.parse());
 		if (parsedNode.length) {
 			parsedNode = parsedNode[0];
+		} else {
+			parsedNode = undefined;
 		}
 		return parsedNode;
 	};
@@ -22,6 +29,12 @@ export const parser = (code: string) => {
 					case "Transaction":
 						controller.addTransaction(c.parse());
 						break;
+					case "Recurring":
+						controller.addRecurringTransaction(c.parse());
+						break;
+					case "Created":
+						controller.addTransactionCreated(c.parse());
+						break;
 				}
 			});
 		},
@@ -30,6 +43,24 @@ export const parser = (code: string) => {
 				date.parse(),
 				description.parse(),
 				entry.children.map((c: any) => c.parse())
+			);
+		},
+		Recurring(date, key, repeatClause, description, entry) {
+			return new RecurringTransaction(
+				date.parse(),
+				repeatClause.parse(),
+				description.parse(),
+				entry.children.map((c: any) => c.parse())
+			);
+		},
+		Created(date, key, description) {
+			return new TransactionCreated(date.parse(), description.parse());
+		},
+		RepeatClause(interval, frequency, end) {
+			return new RepeatClause(
+				getFromIterationNode(interval),
+				frequency.sourceString,
+				getFromIterationNode(end)
 			);
 		},
 		Date(arg0, arg1, arg2, arg3, arg4) {

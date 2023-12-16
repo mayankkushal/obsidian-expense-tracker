@@ -15,6 +15,12 @@ export interface PTAActionDict<T> extends BaseActionDict<T> {
   Program?: (this: NonterminalNode, arg0: IterationNode) => T;
   Block?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   Transaction?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: IterationNode) => T;
+  Recurring?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode, arg3: NonterminalNode, arg4: IterationNode) => T;
+  Created?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
+  RepeatClause?: (this: NonterminalNode, arg0: IterationNode, arg1: NonterminalNode, arg2: IterationNode) => T;
+  RepeatInterval?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  RepeatFrequency?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  RepeatEnd?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   Entry?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
   price?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   amount?: (this: NonterminalNode, arg0: IterationNode, arg1: NonterminalNode, arg2: IterationNode) => T;
@@ -31,6 +37,12 @@ export interface PTAActionDict<T> extends BaseActionDict<T> {
   year?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode, arg3: NonterminalNode) => T;
   month?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   day?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
+  REPEAT?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  CREATED?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  DAY?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  WEEK?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  MONTH?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  YEAR?: (this: NonterminalNode, arg0: TerminalNode) => T;
   entryDelimiter?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   delimiter?: (this: NonterminalNode, arg0: TerminalNode) => T;
   whitespace?: (this: NonterminalNode, arg0: TerminalNode) => T;

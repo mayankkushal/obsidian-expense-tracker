@@ -1,5 +1,5 @@
 import { Transaction } from "src/models/transaction";
-import { formatCurrency, formatDate } from "src/utils/common";
+import { formatCurrency, formatDisplayDate } from "src/utils/common";
 import { formatAccountName } from "src/utils/ui";
 
 export const TransactionView = (
@@ -49,7 +49,7 @@ export function createTransactionTable(
 
 		const dateCell = document.createElement("td");
 		dateCell.className = "px-6 py-4 whitespace-nowrap";
-		dateCell.textContent = formatDate(transaction.date);
+		dateCell.textContent = formatDisplayDate(transaction.date);
 		row.appendChild(dateCell);
 
 		const descriptionCell = document.createElement("td");
@@ -121,7 +121,7 @@ export function createNestedTransactionList(
 		header.className = "flex justify-between items-center p-2";
 
 		const dateDescription = document.createElement("div");
-		const formattedDate = formatDate(transaction.date);
+		const formattedDate = formatDisplayDate(transaction.date);
 		dateDescription.textContent = `${formattedDate} - ${transaction.description}`;
 		header.appendChild(dateDescription);
 

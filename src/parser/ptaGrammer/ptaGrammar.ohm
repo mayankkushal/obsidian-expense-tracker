@@ -1,9 +1,17 @@
 PTA {
 	Program = Block*
-	Block = Transaction
+	Block = Transaction | Recurring | Created
    
     Transaction = Date Description Entry+
     
+    Recurring = Date REPEAT RepeatClause Description Entry+
+    
+    Created = Date CREATED Description
+    
+    RepeatClause = RepeatInterval? RepeatFrequency RepeatEnd?
+    RepeatInterval = digit
+    RepeatFrequency = DAY | WEEK | MONTH | YEAR
+    RepeatEnd = Date
     
     Entry = Account price?
     
@@ -28,6 +36,14 @@ PTA {
     year = digit digit digit digit
     month = digit digit
     day = digit digit
+    
+    REPEAT = "repeat"
+    CREATED = "created"
+    
+    DAY = "day"
+    WEEK = "week"
+    MONTH = "month"
+    YEAR = "year"
     
     entryDelimiter = newline whitespace
     delimiter = "\""

@@ -1,3 +1,5 @@
+import { formatDate } from "src/utils/common";
+
 export class Entry {
 	accountName: string;
 	amount?: number;
@@ -90,5 +92,25 @@ export class Transaction {
 
 		this.toTotal = total;
 		return this.toTotal;
+	}
+
+	format(currency: string, date?: Date, description?: string): string {
+		const finalDate = date || this.date;
+		const finalDescription = description || this.description;
+
+		let output = `\n${formatDate(finalDate)} "${finalDescription}"\n`;
+
+		for (const { accountName, amount } of this.entries) {
+			if (accountName) {
+				output += `${accountName}`;
+
+				if (amount) {
+					output += ` ${amount}${currency}`;
+				}
+			}
+			output += "\n";
+		}
+
+		return output;
 	}
 }

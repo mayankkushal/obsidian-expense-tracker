@@ -2,16 +2,19 @@ import { App, Modal, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { parser as ptaLangParser } from "src/parser/ptaLangParser";
 import { parser } from "src/parser/ptaParser";
 import { PTA } from "./models/pta";
+import { TransactionCreated } from "./models/recurring";
 import { createTransactionForm } from "./ui/TransactionForm";
 
 interface PtaPluginSettings {
 	ledgerPath: string;
 	currency: string;
+	checkIntervalSec: number;
 }
 
 const DEFAULT_SETTINGS: PtaPluginSettings = {
 	ledgerPath: "Ledger.md",
 	currency: "INR",
+	checkIntervalSec: 60 * 60,
 };
 
 export default class PtaPlugin extends Plugin {
@@ -52,6 +55,27 @@ export default class PtaPlugin extends Plugin {
 				query.execute(el, this);
 			}
 		);
+
+		this.registerInterval(
+			window.setInterval(
+				() => this.handleRecurringTransaction(),
+				this.settings.checkIntervalSec * 1000
+			)
+		);
+	}
+
+	async handleRecurringTransaction() {
+		const pta = new PTA(this);
+
+		const ledgerContent = await pta.cachedReadLedger();
+		const controller = parser(ledgerContent);
+
+		controller.checkRecurringTransactions((transaction, date) => {
+			pta.appendContent(
+				TransactionCreated.format(date, transaction.description)
+			);
+			pta.appendContent(transaction.format(this.settings.currency, date));
+		});
 	}
 
 	onunload() {}
@@ -160,5 +184,17 @@ class PtaSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 		);
+
+		new Setting(containerEl)
+			.setName("Check Interval (sec)")
+			.addText((text) =>
+				text
+					.setPlaceholder("3600")
+					.setValue(this.plugin.settings.checkIntervalSec.toString())
+					.onChange(async (value) => {
+						this.plugin.settings.checkIntervalSec = Number(value);
+						await this.plugin.saveSettings();
+					})
+			);
 	}
 }
