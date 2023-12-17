@@ -1,8 +1,8 @@
 import { Controller } from "src/models/controller";
 import {
+	RecEvent,
 	RecurringTransaction,
 	RepeatClause,
-	TransactionCreated,
 } from "src/models/recurring";
 import { Entry, Transaction } from "src/models/transaction";
 import grammar from "src/parser/ptaGrammer/ptaGrammar.ohm-bundle";
@@ -32,8 +32,8 @@ export const parser = (code: string) => {
 					case "Recurring":
 						controller.addRecurringTransaction(c.parse());
 						break;
-					case "Created":
-						controller.addTransactionCreated(c.parse());
+					case "RecEvent":
+						controller.addRecEvent(c.parse());
 						break;
 				}
 			});
@@ -53,8 +53,10 @@ export const parser = (code: string) => {
 				entry.children.map((c: any) => c.parse())
 			);
 		},
-		Created(date, key, description) {
-			return new TransactionCreated(date.parse(), description.parse());
+		RecEvent(date, key, description) {
+			return new RecEvent(date.parse(), description.parse(), {
+				key: key.sourceString,
+			});
 		},
 		RepeatClause(interval, frequency, end) {
 			return new RepeatClause(

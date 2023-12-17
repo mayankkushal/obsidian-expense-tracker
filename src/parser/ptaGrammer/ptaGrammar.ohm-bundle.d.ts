@@ -16,7 +16,8 @@ export interface PTAActionDict<T> extends BaseActionDict<T> {
   Block?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   Transaction?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: IterationNode) => T;
   Recurring?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode, arg3: NonterminalNode, arg4: IterationNode) => T;
-  Created?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
+  RecEvent?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
+  RecEventKey?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   RepeatClause?: (this: NonterminalNode, arg0: IterationNode, arg1: NonterminalNode, arg2: IterationNode) => T;
   RepeatInterval?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   RepeatFrequency?: (this: NonterminalNode, arg0: NonterminalNode) => T;
@@ -39,6 +40,7 @@ export interface PTAActionDict<T> extends BaseActionDict<T> {
   day?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   REPEAT?: (this: NonterminalNode, arg0: TerminalNode) => T;
   CREATED?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  ENDED?: (this: NonterminalNode, arg0: TerminalNode) => T;
   DAY?: (this: NonterminalNode, arg0: TerminalNode) => T;
   WEEK?: (this: NonterminalNode, arg0: TerminalNode) => T;
   MONTH?: (this: NonterminalNode, arg0: TerminalNode) => T;

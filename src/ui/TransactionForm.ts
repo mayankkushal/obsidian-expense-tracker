@@ -63,6 +63,71 @@ export function createTransactionForm(
 	descriptionLabel.appendChild(descriptionInput);
 	form.appendChild(descriptionLabel);
 
+	// Recurring checkbox
+	const recurringLabel = document.createElement("label");
+	recurringLabel.className = "block mt-4 font-medium";
+	recurringLabel.textContent = "Recurring";
+
+	const recurringCheckbox = document.createElement("input");
+	recurringCheckbox.type = "checkbox";
+	recurringCheckbox.className = "mr-2";
+	recurringLabel.appendChild(recurringCheckbox);
+
+	form.appendChild(recurringLabel);
+
+	// Recurring inputs (hidden by default)
+	const recurringInputs = document.createElement("div");
+	recurringInputs.className =
+		"recurring-inputs hidden grid grid-cols-3 gap-4";
+
+	// Interval input
+	const intervalLabel = document.createElement("label");
+	intervalLabel.className = "block text-sm font-medium";
+	intervalLabel.textContent = "Interval";
+	const intervalInput = document.createElement("input");
+	intervalInput.type = "number";
+	intervalInput.className =
+		"intervalInput mt-1 p-2 block w-full rounded-md border-gray-300";
+	intervalLabel.appendChild(intervalInput);
+	recurringInputs.appendChild(intervalLabel);
+
+	// Frequency dropdown
+	const frequencyLabel = document.createElement("label");
+	frequencyLabel.className = "block text-sm font-medium";
+	frequencyLabel.textContent = "Frequency";
+	const frequencyInput = document.createElement("select");
+	frequencyInput.className =
+		"frequencyInput mt-1 px-2 block w-full rounded-md border-gray-300";
+
+	// Add frequency options (you can customize this based on your needs)
+	["day", "week", "month", "year"].forEach((option) => {
+		const optionElement = document.createElement("option");
+		optionElement.value = option.toLowerCase();
+		optionElement.textContent = option;
+		frequencyInput.appendChild(optionElement);
+	});
+
+	frequencyLabel.appendChild(frequencyInput);
+	recurringInputs.appendChild(frequencyLabel);
+
+	// End date input
+	const endLabel = document.createElement("label");
+	endLabel.className = "block text-sm font-medium";
+	endLabel.textContent = "End Date";
+	const endInput = document.createElement("input");
+	endInput.type = "date";
+	endInput.className =
+		"endInput mt-1 p-2 block w-full rounded-md border-gray-300";
+	endLabel.appendChild(endInput);
+	recurringInputs.appendChild(endLabel);
+
+	form.appendChild(recurringInputs);
+
+	// Event listener for recurring checkbox
+	recurringCheckbox.addEventListener("change", () => {
+		recurringInputs.classList.toggle("hidden", !recurringCheckbox.checked);
+	});
+
 	// Transactions fields
 	const transactionsLabel = document.createElement("label");
 	transactionsLabel.className = "block mt-4 font-medium";
@@ -138,12 +203,21 @@ export function createTransactionForm(
 		event.preventDefault(); // Prevent the default form submission behavior
 
 		// Extract values from the form elements
-		const dateValue = dateInput.value;
-		const descriptionValue = descriptionInput?.value || '""';
+		const date = dateInput.value;
+		const description = descriptionInput?.value || '""';
+		const isRecurring = recurringCheckbox.checked;
+		const interval = isRecurring ? parseInt(intervalInput.value) : null;
+		const frequency = isRecurring ? frequencyInput.value : null;
+		const endDate = isRecurring ? endInput.value : null;
 
 		const transactionsData = [];
 		const accountInputs = form.querySelectorAll(".accountInput");
 		const amountInputs = form.querySelectorAll(".amountInput");
+
+		if (isRecurring && !frequency) {
+			alert("Please select a frequency for the recurring transaction.");
+			return; // Prevent form submission if frequency is not selected
+		}
 
 		for (let i = 0; i < accountInputs.length; i++) {
 			const account = (accountInputs[i] as HTMLInputElement).value;
@@ -154,11 +228,10 @@ export function createTransactionForm(
 			transactionsData.push({ account, amount });
 		}
 
-		// Do something with the extracted data
-		console.log("Submitted Date:", dateValue);
-		console.log("Submitted Transactions Data:", transactionsData);
-
-		onSubmit(dateValue, descriptionValue, transactionsData);
+		onSubmit(
+			{ date, description, isRecurring, interval, frequency, endDate },
+			transactionsData
+		);
 
 		// Reset the form or perform additional actions as needed
 		form.reset();

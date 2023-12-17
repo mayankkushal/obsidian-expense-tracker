@@ -1,12 +1,13 @@
 PTA {
 	Program = Block*
-	Block = Transaction | Recurring | Created
+	Block = Transaction | Recurring | RecEvent
    
     Transaction = Date Description Entry+
     
     Recurring = Date REPEAT RepeatClause Description Entry+
     
-    Created = Date CREATED Description
+    RecEvent = Date RecEventKey Description
+    RecEventKey = CREATED | ENDED
     
     RepeatClause = RepeatInterval? RepeatFrequency RepeatEnd?
     RepeatInterval = digit
@@ -39,6 +40,7 @@ PTA {
     
     REPEAT = "repeat"
     CREATED = "created"
+    ENDED = "ended"
     
     DAY = "day"
     WEEK = "week"

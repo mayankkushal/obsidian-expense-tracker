@@ -17,13 +17,36 @@ export class RepeatClause {
 	}
 }
 
-export class TransactionCreated {
+export class RecEvent {
 	date: Date;
 	id: string;
+	isCreated = false;
+	isEnded = false;
 
-	constructor(date: Date, id: string) {
+	constructor(
+		date: Date,
+		id: string,
+		extraArgs: { key?: string; isCreated?: boolean; isEnded?: boolean }
+	) {
 		this.date = date;
 		this.id = id;
+
+		const { key, isCreated, isEnded } = extraArgs;
+
+		if (isCreated) {
+			this.isCreated = true;
+		}
+		if (isEnded) {
+			this.isEnded = true;
+		}
+
+		if (key) {
+			if (key == "created") {
+				this.isCreated = true;
+			} else if (key == "ended") {
+				this.isEnded = true;
+			}
+		}
 	}
 
 	static format(date: Date, description: string) {
@@ -33,7 +56,9 @@ export class TransactionCreated {
 
 export class RecurringTransaction extends Transaction {
 	clause: RepeatClause;
-	transactionCreated: TransactionCreated[] = [];
+	transactionCreated: RecEvent[] = [];
+	isEnded = false;
+	endEvent?: RecEvent;
 
 	constructor(
 		date: Date,
@@ -49,7 +74,7 @@ export class RecurringTransaction extends Transaction {
 		return this.getLastCreatedTransaction()?.date;
 	}
 
-	getLastCreatedTransaction(): TransactionCreated | undefined {
+	getLastCreatedTransaction(): RecEvent | undefined {
 		return this.transactionCreated[this.transactionCreated.length - 1];
 	}
 
@@ -112,11 +137,64 @@ export class RecurringTransaction extends Transaction {
 		}
 	}
 
-	addTransactionCreated(transactionCreated: TransactionCreated) {
-		// add the created date in at the end in a sorted order
-		this.transactionCreated.push(transactionCreated);
-		this.transactionCreated.sort((a, b) => {
-			return a.date.getTime() - b.date.getTime();
-		});
+	addRecEvent(recEvent: RecEvent) {
+		// add the created or ended date in at the end in a sorted order
+		if (recEvent.isCreated) {
+			this.transactionCreated.push(recEvent);
+			this.transactionCreated.sort((a, b) => {
+				return a.date.getTime() - b.date.getTime();
+			});
+		} else if (recEvent.isEnded) {
+			this.isEnded = true;
+			this.endEvent = recEvent;
+		}
+	}
+
+	formatTransaction(
+		currency: string,
+		date?: Date,
+		description?: string
+	): string {
+		const finalDate = date || this.date;
+		const finalDescription = description || this.description;
+
+		let output = `\n${formatDate(finalDate)} "${finalDescription}"\n`;
+
+		for (const { accountName, amount } of this.entries) {
+			if (accountName) {
+				output += `${accountName}`;
+
+				if (amount) {
+					output += ` ${amount}${currency}`;
+				}
+			}
+			output += "\n";
+		}
+
+		return output;
+	}
+
+	format(currency: string, date?: Date, description?: string): string {
+		const finalDate = date || this.date;
+		const finalDescription = description || this.description;
+
+		let output = `\n${formatDate(finalDate)} repeat ${
+			this.clause.interval || ""
+		} ${this.clause.frequency} ${
+			this.clause.end ?? ""
+		} "${finalDescription}"\n`;
+
+		for (const { accountName, amount } of this.entries) {
+			if (accountName) {
+				output += `${accountName}`;
+
+				if (amount) {
+					output += ` ${amount}${currency}`;
+				}
+			}
+			output += "\n";
+		}
+
+		return output;
 	}
 }

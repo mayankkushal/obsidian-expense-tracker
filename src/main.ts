@@ -2,7 +2,12 @@ import { App, Modal, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { parser as ptaLangParser } from "src/parser/ptaLangParser";
 import { parser } from "src/parser/ptaParser";
 import { PTA } from "./models/pta";
-import { TransactionCreated } from "./models/recurring";
+import {
+	RecEvent,
+	RecurringTransaction,
+	RepeatClause,
+} from "./models/recurring";
+import { Transaction } from "./models/transaction";
 import { createTransactionForm } from "./ui/TransactionForm";
 
 interface PtaPluginSettings {
@@ -46,7 +51,6 @@ export default class PtaPlugin extends Plugin {
 			"pta",
 			async (source, el, ctx) => {
 				const query = ptaLangParser(source.trim());
-				const { vault } = this.app;
 
 				const ledgerContent = await new PTA(this).cachedReadLedger();
 				const controller = parser(ledgerContent);
@@ -71,10 +75,10 @@ export default class PtaPlugin extends Plugin {
 		const controller = parser(ledgerContent);
 
 		controller.checkRecurringTransactions((transaction, date) => {
+			pta.appendContent(RecEvent.format(date, transaction.description));
 			pta.appendContent(
-				TransactionCreated.format(date, transaction.description)
+				transaction.formatTransaction(this.settings.currency, date)
 			);
-			pta.appendContent(transaction.format(this.settings.currency, date));
 		});
 	}
 
@@ -101,36 +105,43 @@ class TransactionModal extends Modal {
 		this.plugin = plugin;
 	}
 
-	formatTransaction(
-		date: string,
-		description: string,
-		accounts: { account?: string; amount?: number }[]
-	): string {
-		let output = `\n${date} "${description}"\n`;
-
-		const { currency } = this.plugin.settings;
-
-		for (const { account, amount } of accounts) {
-			if (account) {
-				output += `${account}`;
-
-				if (amount) {
-					output += ` ${amount}${currency}`;
-				}
-			}
-			output += "\n";
-		}
-
-		return output;
-	}
-
 	handleFormSubmit = async (
-		date: string,
-		description: string,
+		data: {
+			date: string;
+			description?: string;
+			isRecurring: boolean;
+			interval?: number;
+			frequency?: string;
+			end?: string;
+		},
 		accounts: { account?: string; amount?: number }[]
 	) => {
+		const { date, description, isRecurring, interval, frequency, end } =
+			data;
+
+		let transaction: Transaction | RecurringTransaction;
+
+		if (isRecurring) {
+			transaction = new RecurringTransaction(
+				new Date(date),
+				new RepeatClause(
+					interval,
+					frequency!,
+					end ? new Date(end) : undefined
+				),
+				description ?? "",
+				RecurringTransaction.buildEntries(accounts as any)
+			);
+		} else {
+			transaction = new Transaction(
+				new Date(date),
+				description ?? "",
+				Transaction.buildEntries(accounts as any)
+			);
+		}
+
 		await new PTA(this.plugin).appendContent(
-			this.formatTransaction(date, description, accounts)
+			transaction.format(this.plugin.settings.currency)
 		);
 	};
 

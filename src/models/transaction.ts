@@ -78,6 +78,14 @@ export class Transaction {
 		}
 	}
 
+	static buildEntries(
+		entries: { account: string; amount?: number; currency?: string }[]
+	) {
+		return entries.map(
+			(entry) => new Entry(entry.account, entry.amount, entry.currency)
+		);
+	}
+
 	getToTotal() {
 		if (this.toTotal !== undefined) {
 			return this.toTotal;

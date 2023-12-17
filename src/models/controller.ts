@@ -1,6 +1,6 @@
 import { AccountHierarchy } from "./account";
 import { Filter } from "./query";
-import { RecurringTransaction, TransactionCreated } from "./recurring";
+import { RecEvent, RecurringTransaction } from "./recurring";
 import { Transaction } from "./transaction";
 
 export class Controller {
@@ -30,10 +30,10 @@ export class Controller {
 		this.recurringMap[transaction.description] = transaction;
 	}
 
-	addTransactionCreated(transactionCreated: TransactionCreated) {
+	addRecEvent(transactionCreated: RecEvent) {
 		const transaction = this.recurringMap[transactionCreated.id];
 		if (transaction) {
-			transaction.addTransactionCreated(transactionCreated);
+			transaction.addRecEvent(transactionCreated);
 		}
 	}
 
@@ -49,14 +49,14 @@ export class Controller {
 		onTrue: (transaction: RecurringTransaction, date: Date) => void
 	) {
 		const currentDate = new Date();
-		this.recurringTransactions.forEach((transaction) => {
-			console.log("checking transaction");
-			const valid = transaction.shouldCreateTransaction(currentDate);
-			if (valid && valid.shouldCreate) {
-				console.log("calling onTrue");
-				onTrue(transaction, valid.nextOccurrenceDate);
-			}
-		});
+		this.recurringTransactions
+			.filter((transaction) => !transaction.isEnded)
+			.forEach((transaction) => {
+				const valid = transaction.shouldCreateTransaction(currentDate);
+				if (valid && valid.shouldCreate) {
+					onTrue(transaction, valid.nextOccurrenceDate);
+				}
+			});
 	}
 }
 
