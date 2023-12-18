@@ -1,7 +1,10 @@
 import { AbstractInputSuggest } from "obsidian";
 import { Controller } from "src/models/controller";
+import { Button } from "./Button";
+import { CheckboxContainer } from "./Checkbox";
+import { Tab } from "./Tab";
 
-export class FileSuggest extends AbstractInputSuggest<string> {
+export class AccountSuggest extends AbstractInputSuggest<string> {
 	textInputEl: HTMLInputElement;
 	controller: Controller;
 
@@ -32,14 +35,97 @@ export class FileSuggest extends AbstractInputSuggest<string> {
 	}
 }
 
+export class DescriptionSuggest extends AbstractInputSuggest<string> {
+	textInputEl: HTMLInputElement;
+	controller: Controller;
+
+	constructor(
+		app: any,
+		textInputEl: HTMLInputElement,
+		controller: Controller
+	) {
+		super(app, textInputEl);
+		this.textInputEl = textInputEl;
+		this.controller = controller;
+	}
+
+	getSuggestions(inputStr: string): string[] {
+		return Object.keys(this.controller.recurringMap).filter((account) =>
+			account.toLowerCase().contains(inputStr.toLowerCase())
+		);
+	}
+
+	renderSuggestion(account: string, el: HTMLElement) {
+		el.setText(account);
+	}
+
+	selectSuggestion(account: string) {
+		this.textInputEl.value = account;
+		this.textInputEl.trigger("input");
+		this.close();
+	}
+}
+
 export function createTransactionForm(
 	el: HTMLElement,
 	onSubmit: Function,
 	app: any,
 	controller: Controller
 ): void {
-	const form = document.createElement("form");
-	form.className = "max-w-md mx-auto p-4 bg-transparent shadow-md rounded-md";
+	const container = document.createElement("div");
+	container.className = "max-w-md mx-auto bg-transparent";
+
+	// Tabs
+	const tabsContainer = document.createElement("div");
+	tabsContainer.className = "flex";
+	container.appendChild(tabsContainer);
+
+	const generalTab = Tab({ text: "General", defaultActive: true });
+	tabsContainer.appendChild(generalTab);
+
+	const advancedTab = Tab({ text: "Advanced" });
+	tabsContainer.appendChild(advancedTab);
+
+	const formsContainer = document.createElement("div");
+	container.appendChild(formsContainer);
+
+	const generalForm = createGeneralForm(app, controller, onSubmit);
+
+	formsContainer.appendChild(generalForm);
+
+	// Advanced Form (initially hidden)
+	const advancedForm = createAdvanceForm(
+		formsContainer,
+		app,
+		controller,
+		onSubmit
+	);
+
+	// Toggle between tabs
+	generalTab.addEventListener("click", () => {
+		generalTab.classList.add("active");
+		advancedTab.classList.remove("active");
+		generalForm.classList.remove("hidden");
+		advancedForm.classList.add("hidden");
+	});
+
+	advancedTab.addEventListener("click", () => {
+		advancedTab.classList.add("active");
+		generalTab.classList.remove("active");
+		advancedForm.classList.remove("hidden");
+		generalForm.classList.add("hidden");
+	});
+
+	el.appendChild(container);
+}
+
+function createGeneralForm(
+	app: any,
+	controller: Controller,
+	onSubmit: Function
+) {
+	const generalForm = document.createElement("form");
+	generalForm.className = "form-general max-w-md mx-auto p-4 bg-transparent";
 
 	// Date field
 	const dateLabel = document.createElement("label");
@@ -50,7 +136,7 @@ export function createTransactionForm(
 	dateInput.className = "mt-1 p-2 block w-full rounded-md border-gray-300";
 	dateInput.value = new Date().toISOString().split("T")[0]; // Default to today
 	dateLabel.appendChild(dateInput);
-	form.appendChild(dateLabel);
+	generalForm.appendChild(dateLabel);
 
 	// Description Field
 	const descriptionLabel = document.createElement("label");
@@ -61,19 +147,20 @@ export function createTransactionForm(
 	descriptionInput.className =
 		"mt-1 p-2 block w-full rounded-md border-gray-300";
 	descriptionLabel.appendChild(descriptionInput);
-	form.appendChild(descriptionLabel);
+	generalForm.appendChild(descriptionLabel);
 
 	// Recurring checkbox
 	const recurringLabel = document.createElement("label");
-	recurringLabel.className = "block mt-4 font-medium";
+	recurringLabel.className = "block font-medium";
 	recurringLabel.textContent = "Recurring";
 
 	const recurringCheckbox = document.createElement("input");
 	recurringCheckbox.type = "checkbox";
 	recurringCheckbox.className = "mr-2";
-	recurringLabel.appendChild(recurringCheckbox);
 
-	form.appendChild(recurringLabel);
+	generalForm.appendChild(
+		CheckboxContainer(recurringLabel, recurringCheckbox)
+	);
 
 	// Recurring inputs (hidden by default)
 	const recurringInputs = document.createElement("div");
@@ -86,6 +173,7 @@ export function createTransactionForm(
 	intervalLabel.textContent = "Interval";
 	const intervalInput = document.createElement("input");
 	intervalInput.type = "number";
+
 	intervalInput.className =
 		"intervalInput mt-1 p-2 block w-full rounded-md border-gray-300";
 	intervalLabel.appendChild(intervalInput);
@@ -121,7 +209,7 @@ export function createTransactionForm(
 	endLabel.appendChild(endInput);
 	recurringInputs.appendChild(endLabel);
 
-	form.appendChild(recurringInputs);
+	generalForm.appendChild(recurringInputs);
 
 	// Event listener for recurring checkbox
 	recurringCheckbox.addEventListener("change", () => {
@@ -132,12 +220,12 @@ export function createTransactionForm(
 	const transactionsLabel = document.createElement("label");
 	transactionsLabel.className = "block mt-4 font-medium";
 	transactionsLabel.textContent = "Accounts";
-	form.appendChild(transactionsLabel);
+	generalForm.appendChild(transactionsLabel);
 
 	// Divider
 	const divider = document.createElement("hr");
 	divider.className = "my-2";
-	form.appendChild(divider);
+	generalForm.appendChild(divider);
 
 	const transactionsContainer = document.createElement("div");
 	transactionsContainer.className = "grid grid-cols-2 gap-4";
@@ -152,7 +240,7 @@ export function createTransactionForm(
 		accountInput.className =
 			"accountInput mt-1 p-2 block w-full rounded-md border-gray-300";
 
-		new FileSuggest(app, accountInput, controller);
+		new AccountSuggest(app, accountInput, controller);
 
 		accountLabel.appendChild(accountInput);
 		const amountLabel = document.createElement("label");
@@ -173,33 +261,32 @@ export function createTransactionForm(
 		addRow();
 	}
 
-	form.appendChild(transactionsContainer);
+	generalForm.appendChild(transactionsContainer);
 
 	// Button Container
 	const buttonContainer = document.createElement("div");
-	buttonContainer.className = "flex justify-between content-center";
+	buttonContainer.className = "flex justify-between content-center mt-2";
 
 	// Plus button to add more rows
-	const plusButton = document.createElement("button");
-	plusButton.type = "button";
-	plusButton.className =
-		"mt-2 bg-green-500 text-white p-2 rounded-md hover:bg-green-600";
-	plusButton.textContent = "+ Account";
+	const plusButton = Button({
+		htmlType: "button",
+		content: "+ Account",
+	});
 	plusButton.addEventListener("click", addRow);
 	buttonContainer.appendChild(plusButton);
 
 	// Submit button
-	const submitButton = document.createElement("button");
-	submitButton.type = "submit";
-	submitButton.className =
-		"mt-4 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600";
-	submitButton.textContent = "Submit";
+	const submitButton = Button({
+		htmlType: "submit",
+		content: "Submit",
+		type: "primary",
+	});
 	buttonContainer.appendChild(submitButton);
 
-	form.appendChild(buttonContainer);
+	generalForm.appendChild(buttonContainer);
 
 	// Event listener for form submission
-	form.addEventListener("submit", (event) => {
+	generalForm.addEventListener("submit", (event) => {
 		event.preventDefault(); // Prevent the default form submission behavior
 
 		// Extract values from the form elements
@@ -211,8 +298,8 @@ export function createTransactionForm(
 		const endDate = isRecurring ? endInput.value : null;
 
 		const transactionsData = [];
-		const accountInputs = form.querySelectorAll(".accountInput");
-		const amountInputs = form.querySelectorAll(".amountInput");
+		const accountInputs = generalForm.querySelectorAll(".accountInput");
+		const amountInputs = generalForm.querySelectorAll(".amountInput");
 
 		if (isRecurring && !frequency) {
 			alert("Please select a frequency for the recurring transaction.");
@@ -228,14 +315,113 @@ export function createTransactionForm(
 			transactionsData.push({ account, amount });
 		}
 
-		onSubmit(
-			{ date, description, isRecurring, interval, frequency, endDate },
-			transactionsData
-		);
+		onSubmit({
+			date,
+			description,
+			isRecurring,
+			interval,
+			frequency,
+			endDate,
+			accounts: transactionsData,
+		});
 
 		// Reset the form or perform additional actions as needed
-		form.reset();
+		generalForm.reset();
+	});
+	return generalForm;
+}
+
+function createAdvanceForm(
+	formsContainer: HTMLDivElement,
+	app: any,
+	controller: Controller,
+	onSubmit: Function
+) {
+	const advancedForm = document.createElement("form");
+	advancedForm.className =
+		"form-advanced max-w-md mx-auto p-4 bg-transparent hidden";
+
+	// Date field
+	const dateLabel = document.createElement("label");
+	dateLabel.className = "block text-sm font-medium";
+	dateLabel.textContent = "Date";
+	const dateInput = document.createElement("input");
+	dateInput.type = "date";
+	dateInput.className = "mt-1 p-2 block w-full rounded-md border-gray-300";
+	dateInput.value = new Date().toISOString().split("T")[0]; // Default to today
+	dateLabel.appendChild(dateInput);
+	advancedForm.appendChild(dateLabel);
+
+	// Description Field
+	const descriptionLabel = document.createElement("label");
+	descriptionLabel.className = "block text-sm font-medium";
+	descriptionLabel.textContent = "Description";
+	const descriptionInput = document.createElement("input");
+	descriptionInput.type = "text";
+	descriptionInput.className =
+		"mt-1 p-2 block w-full rounded-md border-gray-300";
+	descriptionLabel.appendChild(descriptionInput);
+	advancedForm.appendChild(descriptionLabel);
+
+	new DescriptionSuggest(app, descriptionInput, controller);
+
+	// Boolean container
+	const booleanContainer = document.createElement("div");
+	booleanContainer.className = "flex space-x-4 mt-2";
+
+	// isCreated and isEnded checkboxes
+	const isCreatedLabel = document.createElement("label");
+	isCreatedLabel.className = "block text-sm font-medium";
+	isCreatedLabel.textContent = "Is Created";
+	const isCreatedCheckbox = document.createElement("input");
+	isCreatedCheckbox.type = "checkbox";
+	isCreatedCheckbox.className = "mt-1";
+	booleanContainer.appendChild(
+		CheckboxContainer(isCreatedLabel, isCreatedCheckbox)
+	);
+
+	const isEndedLabel = document.createElement("label");
+	isEndedLabel.className = "block text-sm font-medium";
+	isEndedLabel.textContent = "Is Ended";
+	const isEndedCheckbox = document.createElement("input");
+	isEndedCheckbox.type = "checkbox";
+	isEndedCheckbox.className = "mt-1";
+	booleanContainer.appendChild(
+		CheckboxContainer(isEndedLabel, isEndedCheckbox)
+	);
+
+	advancedForm.appendChild(booleanContainer);
+
+	// Button Container
+	const buttonContainer = document.createElement("div");
+	buttonContainer.className = "flex justify-end";
+	// Submit button
+	const submitButton = Button({
+		htmlType: "submit",
+		content: "Submit",
+		type: "primary",
 	});
 
-	el.appendChild(form);
+	buttonContainer.appendChild(submitButton);
+
+	advancedForm.appendChild(buttonContainer);
+
+	// Event listener for form submission
+	advancedForm.addEventListener("submit", (event) => {
+		event.preventDefault(); // Prevent the default form submission behavior
+
+		// Extract values from the form elements
+		const date = dateInput.value;
+		const description = descriptionInput?.value || '""';
+		const isCreated = isCreatedCheckbox.checked;
+		const isEnded = isEndedCheckbox.checked;
+
+		onSubmit(null, { date, description, isCreated, isEnded });
+
+		// Reset the form or perform additional actions as needed
+		advancedForm.reset();
+	});
+
+	formsContainer.appendChild(advancedForm);
+	return advancedForm;
 }

@@ -81,6 +81,7 @@ export class Transaction {
 	static buildEntries(
 		entries: { account: string; amount?: number; currency?: string }[]
 	) {
+		console.log("entreid", entries);
 		return entries.map(
 			(entry) => new Entry(entry.account, entry.amount, entry.currency)
 		);

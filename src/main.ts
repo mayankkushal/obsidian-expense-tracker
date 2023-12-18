@@ -75,7 +75,9 @@ export default class PtaPlugin extends Plugin {
 		const controller = parser(ledgerContent);
 
 		controller.checkRecurringTransactions((transaction, date) => {
-			pta.appendContent(RecEvent.format(date, transaction.description));
+			pta.appendContent(
+				RecEvent.formatFromInput(date, transaction.description)
+			);
 			pta.appendContent(
 				transaction.formatTransaction(this.settings.currency, date)
 			);
@@ -106,18 +108,63 @@ class TransactionModal extends Modal {
 	}
 
 	handleFormSubmit = async (
-		data: {
+		transactionData?: {
 			date: string;
 			description?: string;
 			isRecurring: boolean;
 			interval?: number;
 			frequency?: string;
 			end?: string;
+			accounts: { account?: string; amount?: number }[];
 		},
-		accounts: { account?: string; amount?: number }[]
+		recEventData?: {
+			date: string;
+			description: string;
+			isCreated: boolean;
+			isEnded: boolean;
+		}
 	) => {
-		const { date, description, isRecurring, interval, frequency, end } =
-			data;
+		if (transactionData) {
+			await this.handleTransactionData(transactionData);
+		}
+
+		if (recEventData) {
+			await this.handleRecEventData(recEventData);
+		}
+	};
+
+	async handleRecEventData(recEventData: {
+		date: string;
+		description: string;
+		isCreated: boolean;
+		isEnded: boolean;
+	}) {
+		const { date, description, isCreated, isEnded } = recEventData;
+		const recEvent = new RecEvent(new Date(date), description, {
+			isCreated,
+			isEnded,
+		});
+		await new PTA(this.plugin).appendContent(recEvent.format());
+	}
+
+	private async handleTransactionData(transactionData: {
+		date: string;
+		description?: string | undefined;
+		isRecurring: boolean;
+		interval?: number | undefined;
+		frequency?: string | undefined;
+		end?: string | undefined;
+		accounts: { account?: string; amount?: number }[];
+	}) {
+		const {
+			date,
+			description,
+			isRecurring,
+			interval,
+			frequency,
+			end,
+			accounts,
+		} = transactionData;
 
 		let transaction: Transaction | RecurringTransaction;
 
@@ -143,7 +190,7 @@ class TransactionModal extends Modal {
 		await new PTA(this.plugin).appendContent(
 			transaction.format(this.plugin.settings.currency)
 		);
-	};
+	}
 
 	async onOpen() {
 		const { contentEl } = this;

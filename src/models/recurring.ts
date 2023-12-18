@@ -49,8 +49,13 @@ export class RecEvent {
 		}
 	}
 
-	static format(date: Date, description: string) {
-		return `${formatDate(date)} created "${description}"`;
+	static formatFromInput(date: Date, description: string) {
+		return `\n${formatDate(date)} created "${description}"`;
+	}
+
+	format() {
+		const key = this.isCreated ? "created" : "ended";
+		return `\n${formatDate(this.date)} ${key} "${this.id}"`;
 	}
 }
 
@@ -155,23 +160,7 @@ export class RecurringTransaction extends Transaction {
 		date?: Date,
 		description?: string
 	): string {
-		const finalDate = date || this.date;
-		const finalDescription = description || this.description;
-
-		let output = `\n${formatDate(finalDate)} "${finalDescription}"\n`;
-
-		for (const { accountName, amount } of this.entries) {
-			if (accountName) {
-				output += `${accountName}`;
-
-				if (amount) {
-					output += ` ${amount}${currency}`;
-				}
-			}
-			output += "\n";
-		}
-
-		return output;
+		return super.format(currency, date, description);
 	}
 
 	format(currency: string, date?: Date, description?: string): string {
