@@ -14,10 +14,10 @@ Simple PTA uses a simple, text-based format for recording transactions. Each tra
 A transaction entry follows the format:
 ```plaintext
 <date> "<description>"
-<space><account> <amount><currency>
-<space><account> <amount><currency>
+<account> <amount><currency>
+<account> <amount><currency>
 ...
-<space><account>
+<account>
 ```
 
 Example:
@@ -48,10 +48,10 @@ manually stopped
 A transaction entry follows the format:
 ```plaintext
 <date> <interval> <frequency> <end date> "<description>"
-<space><account> <amount><currency>
-<space><account> <amount><currency>
+<account> <amount><currency>
+<account> <amount><currency>
 ...
-<space><account>
+<account>
 ```
 
 Example
@@ -62,7 +62,7 @@ Expenses:Entertainment:Online 1000 INR
 Assets:Bank:ICICI
 ```
 
-This means that, create a transaction every 3 month on 14th for "Netflix" till 2024-06-14
+This means that, create a transaction every 3 month on 14th for "Netflix" till 2024-06-14.
 It creates this entry in the  ledger
 ```plaintext
 2023-12-14 created "Netflix"
@@ -71,7 +71,8 @@ Expenses:Entertainment:Online 1000 INR
 Assets:Bank:ICICI
 ```
 
-> [!NOTE] Description is very important here, it is used as unique key to identify the recurring transactions
+> [!NOTE]
+> Description is very important here, it is used as unique key to identify the recurring transactions
 
 `2023-12-14 created "Netflix"` - denotes that last entry was created on 2023-12-14. This can be used to skip a certain transaction.
 For example, if we do not want the system to add a transaction for the next iteration, we can add `2024-03-14 created "Netflix"` to the ledger
