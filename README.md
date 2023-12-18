@@ -19,17 +19,65 @@ A transaction entry follows the format:
 ...
 <space><account>
 ```
+
+Example:
+
+   ```plaintext
+   2023-12-14 "Movie Ticket"
+     Expenses:Entertainment:Movie 150 INR
+     Assets:Bank:ICICI
+   ```
+
 **Breakdown:**
 
-- 2023-12-10: The date of the transaction.
-- "Lunch": A short description of the transaction.
-- Expenses:Food:Lunch 110.00INR: This specifies the account used (Expenses:Food:Lunch) and the amount spent (110.00INR).
-- Assets:Bank:HDFC: This specifies the account that money was sent from.
+- 2023-12-14: The date of the transaction.
+- "Movie Ticket": A short description of the transaction.
+- Expenses:Entertainment:Movie 110.00INR: This specifies the account used (Expenses:Food:Lunch) and the amount spent (110.00INR).
+- Assets:Bank:ICICI: This specifies the account that money was sent from.
 
 
 > [!NOTE] 
 > - The amount and currency are optional for the last account. It is automatically calculated as the negative of the sum of all positive amounts listed.
 > - You can create custom accounts and sub-accounts to categorize your finances.
+
+#### Recurring Transactions
+
+Recurring transactions are also supported, once added, the transaction for it is automatically added to the ledger till the end date or till
+manually stopped
+
+A transaction entry follows the format:
+```plaintext
+<date> <interval> <frequency> <end date> "<description>"
+<space><account> <amount><currency>
+<space><account> <amount><currency>
+...
+<space><account>
+```
+
+Example
+
+```plaintext
+2023-12-14 3 month 2024-06-14 "Netflix"
+Expenses:Entertainment:Online 1000 INR
+Assets:Bank:ICICI
+```
+
+This means that, create a transaction every 3 month on 14th for "Netflix" till 2024-06-14
+It creates this entry in the  ledger
+```plaintext
+2023-12-14 created "Netflix"
+2023-12-14 "Netflix"
+Expenses:Entertainment:Online 1000 INR
+Assets:Bank:ICICI
+```
+
+> [!NOTE] Description is very important here, it is used as unique key to identify the recurring transactions
+
+`2023-12-14 created "Netflix"` - denotes that last entry was created on 2023-12-14. This can be used to skip a certain transaction.
+For example, if we do not want the system to add a transaction for the next iteration, we can add `2024-03-14 created "Netflix"` to the ledger
+
+`2024-03-14 ended "Netflix"` - this can be added to the ledger to manually end this recurring transaction.
+
 
 ### Recording Transactions
 Simple PTA offers two convenient ways to record your transactions:
@@ -43,18 +91,13 @@ Simple PTA offers two convenient ways to record your transactions:
      - Accounts (separated by spaces)
      - Amounts (optional for last account, calculated automatically)
 
-   Example:
-
-   ```2023-12-14 "Movie Ticket"
-     Expenses:Entertainment:Movie 150 INR
-     Assets:Bank:ICICI
-   ```
-
-2. Using the transaction modal:
+2. Using the add transaction modal:
 
    - Click the Simple PTA button on the Obsidian ribbon menu.
    - This opens the transaction modal where you can easily enter the details.
    - Click "Submit" to record the transaction.
+
+
 
 > [!TIP]
 > You can create a shortcut on your mobile device to directly open the transaction modal. Use the Obsidian URI `obsidian://simple-pta` when creating the shortcut.
