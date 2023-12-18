@@ -179,6 +179,11 @@ class TransactionModal extends Modal {
 				description ?? "",
 				RecurringTransaction.buildEntries(accounts as any)
 			);
+			await new PTA(this.plugin).appendContent(
+				(transaction as RecurringTransaction).formatTransaction(
+					this.plugin.settings.currency
+				)
+			);
 		} else {
 			transaction = new Transaction(
 				new Date(date),
