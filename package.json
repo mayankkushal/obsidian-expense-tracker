@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-expense-tracker",
 	"version": "0.0.1",
 	"description": "Simple plugin to add very simple PTA to Obsidian",
 	"main": "main.js",

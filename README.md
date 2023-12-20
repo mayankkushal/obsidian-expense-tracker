@@ -1,11 +1,11 @@
-# Obsidian Simple PTA
+# Obsidian Expense Tracker
 
-Welcome to Simple PTA, your personal finance tracker within Obsidian!
+Welcome to Expense Tracker, your personal finance tracker within Obsidian!
 
 ## Transaction
 
 ### Structure of Transactions
-Simple PTA uses a simple, text-based format for recording transactions. Each transaction consists of three parts:
+Expense Tracker uses a simple, text-based format for recording transactions. Each transaction consists of three parts:
 
 1. **Date**: The date of the transaction, written in the format YYYY-MM-DD.
 2. **Description**: A short description of the transaction.
@@ -35,9 +35,10 @@ Example:
 - Expenses:Entertainment:Movie 110.00INR: This specifies the account used (Expenses:Food:Lunch) and the amount spent (110.00INR).
 - Assets:Bank:ICICI: This specifies the account that money was sent from.
 
-
-> [!NOTE] 
+> [!NOTE]
+>
 > - The amount and currency are optional for the last account. It is automatically calculated as the negative of the sum of all positive amounts listed.
+>
 > - You can create custom accounts and sub-accounts to categorize your finances.
 
 #### Recurring Transactions
@@ -81,7 +82,7 @@ For example, if we do not want the system to add a transaction for the next iter
 
 
 ### Recording Transactions
-Simple PTA offers two convenient ways to record your transactions:
+Expense Tracker offers two convenient ways to record your transactions:
 
 1. Adding directly in the ledger.md file:
 
@@ -94,14 +95,14 @@ Simple PTA offers two convenient ways to record your transactions:
 
 2. Using the add transaction modal:
 
-   - Click the Simple PTA button on the Obsidian ribbon menu.
+   - Click the Expense Tracker button on the Obsidian ribbon menu.
    - This opens the transaction modal where you can easily enter the details.
    - Click "Submit" to record the transaction.
 
 
 
 > [!TIP]
-> You can create a shortcut on your mobile device to directly open the transaction modal. Use the Obsidian URI `obsidian://simple-pta` when creating the shortcut.
+> You can create a shortcut on your mobile device to directly open the transaction modal. Use the Obsidian URI `obsidian://expense-tracker` when creating the shortcut.
 
 ### Example
 ```plaintext
@@ -115,7 +116,7 @@ Simple PTA offers two convenient ways to record your transactions:
 
 ```
 
-## Simple PTA Query Language
+## Expense Tracker Query Language
 
 ### Structure and Syntax
 
@@ -154,7 +155,7 @@ selectKey filterClause*
 ### Examples
 
 ````
-```pta
+```oet
 balance
 account *
 structure flat
@@ -163,7 +164,7 @@ structure flat
 This gives balance for all the root level accounts in a flat structure
 
 ````
-```pta
+```oet
 balance
 account Expenses.Food.*
 date current month
@@ -174,7 +175,7 @@ This gives balance for all the sub-accounts of Expenses:Food in a nested structu
 
 
 ````
-```pta
+```oet
 transaction
 date current month
 structure nested

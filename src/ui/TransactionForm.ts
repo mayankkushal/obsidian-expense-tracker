@@ -291,7 +291,7 @@ function createGeneralForm(
 
 		// Extract values from the form elements
 		const date = dateInput.value;
-		const description = descriptionInput?.value || '""';
+		const description = descriptionInput?.value || "";
 		const isRecurring = recurringCheckbox.checked;
 		const interval = isRecurring ? parseInt(intervalInput.value) : null;
 		const frequency = isRecurring ? frequencyInput.value : null;

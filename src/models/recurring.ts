@@ -64,6 +64,7 @@ export class RecurringTransaction extends Transaction {
 	transactionCreated: RecEvent[] = [];
 	isEnded = false;
 	endEvent?: RecEvent;
+	description: string;
 
 	constructor(
 		date: Date,

@@ -19,12 +19,12 @@ export class Entry {
 
 export class Transaction {
 	date: Date;
-	description: string;
+	description?: string;
 	entries: Entry[];
 	toTotal: number;
 	currency: string;
 
-	constructor(date: Date, description: string, entries: Entry[]) {
+	constructor(date: Date, description: string | undefined, entries: Entry[]) {
 		this.date = date;
 		this.description = description;
 		this.entries = entries;
@@ -81,7 +81,6 @@ export class Transaction {
 	static buildEntries(
 		entries: { account: string; amount?: number; currency?: string }[]
 	) {
-		console.log("entreid", entries);
 		return entries.map(
 			(entry) => new Entry(entry.account, entry.amount, entry.currency)
 		);
@@ -103,11 +102,21 @@ export class Transaction {
 		return this.toTotal;
 	}
 
+	formatDescription(description?: string) {
+		console.log("description", description);
+		if (description) {
+			return `"${description}"`;
+		}
+		return '""';
+	}
+
 	format(currency: string, date?: Date, description?: string): string {
 		const finalDate = date || this.date;
 		const finalDescription = description || this.description;
 
-		let output = `\n${formatDate(finalDate)} "${finalDescription}"\n`;
+		let output = `\n${formatDate(finalDate)} ${this.formatDescription(
+			finalDescription
+		)}\n`;
 
 		for (const { accountName, amount } of this.entries) {
 			if (accountName) {

@@ -40,7 +40,7 @@ export default class PtaPlugin extends Plugin {
 		ribbonIconEl.addClass("my-plugin-ribbon-class");
 
 		// Add protocol to open transaction modal
-		this.registerObsidianProtocolHandler("simple-pta", () => {
+		this.registerObsidianProtocolHandler("expense-tracker", () => {
 			new TransactionModal(this.app, this).open();
 		});
 
@@ -48,7 +48,7 @@ export default class PtaPlugin extends Plugin {
 		this.addSettingTab(new PtaSettingTab(this.app, this));
 
 		this.registerMarkdownCodeBlockProcessor(
-			"pta",
+			"oet",
 			async (source, el, ctx) => {
 				const query = ptaLangParser(source.trim());
 
@@ -187,7 +187,7 @@ class TransactionModal extends Modal {
 		} else {
 			transaction = new Transaction(
 				new Date(date),
-				description ?? "",
+				description,
 				Transaction.buildEntries(accounts as any)
 			);
 		}
