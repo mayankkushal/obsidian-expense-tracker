@@ -54,7 +54,7 @@ export function createTransactionTable(
 
 		const descriptionCell = document.createElement("td");
 		descriptionCell.className = "px-6 py-4 whitespace-nowrap";
-		descriptionCell.textContent = transaction.description;
+		descriptionCell.textContent = transaction.description || "";
 		row.appendChild(descriptionCell);
 
 		const toAccountCell = document.createElement("td");
