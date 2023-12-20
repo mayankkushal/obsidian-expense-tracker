@@ -1,11 +1,10 @@
 {
 	"id": "expense-tracker",
 	"name": "Expense Tracker",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"minAppVersion": "0.15.0",
 	"description": "Your expense tracking simplified.",
 	"author": "Mayank Kushal",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"authorUrl": "https://github.com/mayankkushal",
 	"isDesktopOnly": false
 }
