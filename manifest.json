@@ -1,10 +1,10 @@
 {
 	"id": "obsidian-expense-tracker",
-	"name": "Obsidian Expense Tracker",
-	"version": "0.0.8",
+	"name": "Expense Tracker",
+	"version": "0.0.9",
 	"minAppVersion": "0.15.0",
-	"description": "Expense Tracker for Obsidian based on Plain Text Accounting",
-	"author": "Obsidian",
+	"description": "Your expense tracking simplified.",
+	"author": "Mayank Kushal",
 	"authorUrl": "https://obsidian.md",
 	"fundingUrl": "https://obsidian.md/pricing",
 	"isDesktopOnly": false
