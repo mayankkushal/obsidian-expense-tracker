@@ -2,15 +2,24 @@ import { Transaction } from "src/models/transaction";
 import { formatCurrency, formatDisplayDate } from "src/utils/common";
 import { formatAccountName } from "src/utils/ui";
 
-export const TransactionView = (
-	el: HTMLElement,
-	data: Transaction[],
-	structure: string = "flat",
-	currency: string = ""
-) => {
+export interface ITransactionView {
+	el: HTMLElement;
+	data: Transaction[];
+	structure?: string;
+	currency?: string;
+	hideTotal?: boolean;
+}
+
+export const TransactionView = ({
+	el,
+	data,
+	structure = "flat",
+	currency = "",
+	hideTotal = false,
+}: ITransactionView) => {
 	switch (structure) {
 		case "flat":
-			createTransactionTable(el, data, currency);
+			createTransactionTable(el, data, currency, hideTotal);
 			break;
 		case "nested":
 			createNestedTransactionList(el, data, currency);
@@ -21,7 +30,8 @@ export const TransactionView = (
 export function createTransactionTable(
 	el: HTMLElement,
 	data: Transaction[],
-	currency: string
+	currency: string,
+	hideTotal?: boolean
 ): void {
 	const table = document.createElement("table");
 	table.className = "min-w-full divide-y divide-gray-200";
@@ -43,6 +53,8 @@ export function createTransactionTable(
 
 	// Create table body
 	const tbody = document.createElement("tbody");
+
+	let tableTotal = 0;
 
 	data.forEach((transaction) => {
 		const row = document.createElement("tr");
@@ -99,10 +111,37 @@ export function createTransactionTable(
 		row.appendChild(totalCell);
 
 		tbody.appendChild(row);
+
+		tableTotal += transaction.toTotal;
 	});
+
+	if (!hideTotal) {
+		addTableTotal(tableTotal, currency, tbody);
+	}
 
 	table.appendChild(tbody);
 	el.appendChild(table);
+}
+
+function addTableTotal(
+	tableTotal: number,
+	currency: string,
+	tbody: HTMLTableSectionElement
+) {
+	const totalRow = document.createElement("tr");
+	for (let i = 0; i < 3; i++) {
+		const emptyCell = document.createElement("td");
+		emptyCell.className = "px-6 py-4 whitespace-nowrap";
+		emptyCell.textContent = "";
+		totalRow.appendChild(emptyCell);
+	}
+	const totalTextCell = document.createElement("td");
+	totalTextCell.textContent = "Total";
+	totalRow.appendChild(totalTextCell);
+	const totalCell = document.createElement("td");
+	totalCell.textContent = formatCurrency(tableTotal, currency);
+	totalRow.appendChild(totalCell);
+	tbody.appendChild(totalRow);
 }
 
 export function createNestedTransactionList(

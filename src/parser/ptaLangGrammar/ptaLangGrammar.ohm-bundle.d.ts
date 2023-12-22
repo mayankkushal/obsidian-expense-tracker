@@ -26,6 +26,7 @@ export interface PTALangActionDict<T> extends BaseActionDict<T> {
   STRUCTURE?: (this: NonterminalNode, arg0: TerminalNode) => T;
   LIMIT?: (this: NonterminalNode, arg0: TerminalNode) => T;
   ORDER?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  HIDE?: (this: NonterminalNode, arg0: TerminalNode) => T;
   identifier?: (this: NonterminalNode, arg0: IterationNode) => T;
   string?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode, arg2: TerminalNode) => T;
   number?: (this: NonterminalNode, arg0: IterationNode) => T;

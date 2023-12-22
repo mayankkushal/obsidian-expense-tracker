@@ -1,7 +1,7 @@
 import { moment } from "obsidian";
 import PtaPlugin from "src/main";
-import { BalanceView } from "src/ui/BalanceView";
-import { TransactionView } from "src/ui/TransactionView";
+import { BalanceView, IBalanceView } from "src/ui/BalanceView";
+import { ITransactionView, TransactionView } from "src/ui/TransactionView";
 import { Controller, ControllerAnalyzer } from "./controller";
 
 export class Filter {
@@ -89,6 +89,7 @@ export class BalanceQuery extends Query {
 		const accountName = this.getFilter("account");
 		const date = this.getFilter("date");
 		const structure = this.getFilter("structure");
+		const hides = this.getFilters("hide");
 
 		if (!accountName) {
 			throw new Error("Account name is required");
@@ -111,7 +112,24 @@ export class BalanceQuery extends Query {
 			structure?.value
 		);
 
-		BalanceView(el, account, plugin.settings.currency);
+		const kwargs: IBalanceView = {
+			el,
+			data: account,
+			currency: plugin.settings.currency,
+		};
+
+		if (hides.length) {
+			hides.forEach((hide) => {
+				if (hide.value === "creationDate") {
+					kwargs.hideCreationDate = true;
+				}
+				if (hide.value === "path") {
+					kwargs.hidePath = true;
+				}
+			});
+		}
+
+		BalanceView(kwargs);
 	}
 }
 
@@ -122,6 +140,7 @@ export class TransactionQuery extends Query {
 		const structure = this.getFilter("structure");
 		const limit = this.getFilter("limit");
 		const orders = this.getFilters("order");
+		const hides = this.getFilters("hide");
 
 		let filters: any = {};
 
@@ -146,11 +165,21 @@ export class TransactionQuery extends Query {
 			);
 		}
 
-		TransactionView(
+		const kwargs: ITransactionView = {
 			el,
-			transactions,
-			structure?.value,
-			plugin.settings.currency
-		);
+			data: transactions,
+			structure: structure?.value,
+			currency: plugin.settings.currency,
+		};
+
+		if (hides.length) {
+			hides.forEach((hide) => {
+				if (hide.value === "total") {
+					kwargs.hideTotal = true;
+				}
+			});
+		}
+
+		TransactionView(kwargs);
 	}
 }
