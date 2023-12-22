@@ -247,9 +247,13 @@ function createGeneralForm(
 		amountLabel.className = "block text-sm font-medium";
 		amountLabel.textContent = "Amount";
 		const amountInput = document.createElement("input");
-		amountInput.type = "number";
+		amountInput.type = "text";
 		amountInput.className =
 			"amountInput mt-1 p-2 block w-full rounded-md border-gray-300";
+		amountInput.title =
+			"Enter a valid mathematical expression (e.g., 3+5, 2*50)";
+
+		amountInput.pattern = "^[\\d+\\-*\\/().]+$";
 		amountLabel.appendChild(amountInput);
 
 		transactionsContainer.appendChild(accountLabel);
@@ -308,9 +312,14 @@ function createGeneralForm(
 
 		for (let i = 0; i < accountInputs.length; i++) {
 			const account = (accountInputs[i] as HTMLInputElement).value;
-			const amount = parseFloat(
-				(amountInputs[i] as HTMLInputElement).value
-			);
+			let amountStr = (amountInputs[i] as HTMLInputElement).value;
+			let amount;
+			try {
+				amount = eval(amountStr); // Use eval to evaluate the mathematical expression
+			} catch (error) {
+				alert("Error evaluating the amount expression.");
+				return;
+			}
 
 			transactionsData.push({ account, amount });
 		}
