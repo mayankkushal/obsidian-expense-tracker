@@ -99,7 +99,8 @@ Expense Tracker offers two convenient ways to record your transactions:
    - This opens the transaction modal where you can easily enter the details.
    - Click "Submit" to record the transaction.
 
-
+> [!TIP]
+> You can use the amount input as a calculator and put mathematical expression there
 
 > [!TIP]
 > You can create a shortcut on your mobile device to directly open the transaction modal. Use the Obsidian URI `obsidian://expense-tracker` when creating the shortcut.
@@ -138,6 +139,7 @@ selectKey filterClause*
 | account    |               | Regex of account name ex: Expense:Food.* |
 | date       | last, current | day, week, month, year                   |
 | structure  |               | flat, nested                             |
+| hide       |               | creationDate, path                       |
 
 > [!NOTE]
 > account is required for balance queries
@@ -151,6 +153,7 @@ selectKey filterClause*
 | structure  |               | flat, nested                             |
 | limit      | first, last   | <number>                                 |
 | order      | asc, desc     | amount, date                             |
+| hide       |               | total                                    |
 
 ### Examples
 
