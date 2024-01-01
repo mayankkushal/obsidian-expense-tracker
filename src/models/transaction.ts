@@ -103,7 +103,6 @@ export class Transaction {
 	}
 
 	formatDescription(description?: string) {
-		console.log("description", description);
 		if (description) {
 			return `"${description}"`;
 		}

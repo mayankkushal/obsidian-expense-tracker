@@ -20,9 +20,11 @@ export const formatCurrency = (value: number, currency: string): string => {
 };
 
 export const formatDate = (date: Date): string => {
-	// convert date to yyyy-mm-dd format
+	// convert date to yyyy-mm-dd format with leading zeros
 	const year = date.getFullYear();
-	const month = date.getMonth() + 1;
-	const day = date.getDate();
+	const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Ensure two digits for month
+	const day = date.getDate().toString().padStart(2, "0"); // Ensure two digits for day
+
+	// Return the formatted date string
 	return `${year}-${month}-${day}`;
 };
