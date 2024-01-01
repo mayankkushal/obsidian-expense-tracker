@@ -88,11 +88,11 @@ export const parser = (code: string) => {
 		amount(sign, mainAmount, decimalAmount) {
 			const parsedSign = getFromIterationNode(sign);
 			const parsedDecimalAmount = getFromIterationNode(decimalAmount);
-			const mainAccount = mainAmount.sourceString;
+			const parsedMainAmount = mainAmount.sourceString;
 
 			return parseFloat(
-				`${parsedSign || ""}${mainAccount || ""}${
-					parsedDecimalAmount || ""
+				`${parsedSign || ""}${parsedMainAmount || "0"}.${
+					parsedDecimalAmount || "0"
 				}`
 			);
 		},
