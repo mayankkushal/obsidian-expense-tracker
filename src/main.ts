@@ -115,7 +115,7 @@ class TransactionModal extends Modal {
 			interval?: number;
 			frequency?: string;
 			end?: string;
-			accounts: { account?: string; amount?: number }[];
+			accounts: { account: string; amount?: number }[];
 		},
 		recEventData?: {
 			date: string;
@@ -154,7 +154,7 @@ class TransactionModal extends Modal {
 		interval?: number | undefined;
 		frequency?: string | undefined;
 		end?: string | undefined;
-		accounts: { account?: string; amount?: number }[];
+		accounts: { account: string; amount?: number }[];
 	}) {
 		const {
 			date,
@@ -177,7 +177,7 @@ class TransactionModal extends Modal {
 					end ? new Date(end) : undefined
 				),
 				description ?? "",
-				RecurringTransaction.buildEntries(accounts as any)
+				RecurringTransaction.buildEntries(accounts)
 			);
 			await new PTA(this.plugin).appendContent(
 				(transaction as RecurringTransaction).formatTransaction(
@@ -188,7 +188,7 @@ class TransactionModal extends Modal {
 			transaction = new Transaction(
 				new Date(date),
 				description,
-				Transaction.buildEntries(accounts as any)
+				Transaction.buildEntries(accounts)
 			);
 		}
 

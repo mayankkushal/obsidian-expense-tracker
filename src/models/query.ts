@@ -9,7 +9,7 @@ export class Filter {
 	operator: string;
 	value: string;
 
-	constructor(key: string, operator: string, value: string) {
+	constructor(key: string, operator: string = "", value: string = "") {
 		this.key = key;
 		this.operator = operator;
 		this.value = value;
@@ -71,16 +71,26 @@ class Query {
 
 		switch (filter.operator) {
 			case "current":
-				startDate = moment().startOf(filter.value as any);
-				endDate = moment().endOf(filter.value as any);
+				startDate = moment().startOf(
+					filter.value as moment.unitOfTime.StartOf
+				);
+				endDate = moment().endOf(
+					filter.value as moment.unitOfTime.StartOf
+				);
 				break;
 			case "last":
 				startDate = moment()
-					.subtract(1, filter.value as any)
-					.startOf(filter.value as any);
+					.subtract(
+						1,
+						filter.value as moment.unitOfTime.DurationConstructor
+					)
+					.startOf(filter.value as moment.unitOfTime.StartOf);
 				endDate = moment()
-					.subtract(1, filter.value as any)
-					.endOf(filter.value as any);
+					.subtract(
+						1,
+						filter.value as moment.unitOfTime.DurationConstructor
+					)
+					.endOf(filter.value as moment.unitOfTime.StartOf);
 				break;
 			case "range":
 				let [startDateStr, endDateStr] = filter.value.split(",");
@@ -109,7 +119,7 @@ export class BalanceQuery extends Query {
 			throw new Error("Account name is required");
 		}
 
-		let filters: any = {};
+		let filters: { [key: string]: any } = {};
 
 		filters["accountName"] = accountName.value;
 
@@ -200,8 +210,8 @@ export class TransactionQuery extends Query {
 		if (limit) {
 			transactions = this.analyzer.filterByLimit(
 				transactions,
-				limit.operator as any,
-				limit.value as any
+				limit.operator,
+				parseInt(limit.value)
 			);
 		}
 

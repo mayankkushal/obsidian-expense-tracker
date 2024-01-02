@@ -1,6 +1,6 @@
 export function Button(props: {
-	htmlType?: any;
-	content?: any;
+	htmlType: "button" | "submit" | "reset";
+	content: string;
 	type?: string;
 	extraClasses?: string;
 }) {

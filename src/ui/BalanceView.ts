@@ -120,14 +120,31 @@ const nestedAccountView = (
 	const container = document.createElement("div");
 	container.className = `border-l-2 ${getRandomBorderColor()} border-dotted p-1 mb-3`;
 
-	container.innerHTML = `
-		<div><span class="text-lg font-bold" style="color: var(--text-success);">${
-			data.name
-		}</span> - <span class="text-base" style="color: var(--text-accent)"> ${formatCurrency(
-		data.balance,
-		currency
-	)}</span></div>
-		`;
+	// Create the outer div
+	const outerDiv = document.createElement("div");
+
+	// Create the span for the name with styling
+	const nameSpan = document.createElement("span");
+	nameSpan.classList.add("text-lg", "font-bold");
+	nameSpan.style.color = "var(--text-success)";
+	nameSpan.textContent = data.name;
+
+	// Create the separator text
+	const separatorText = document.createTextNode(" - ");
+
+	// Create the span for the balance with styling
+	const balanceSpan = document.createElement("span");
+	balanceSpan.classList.add("text-base");
+	balanceSpan.style.color = "var(--text-accent)";
+	balanceSpan.textContent = formatCurrency(data.balance, currency);
+
+	// Append the created elements to the outer div
+	outerDiv.appendChild(nameSpan);
+	outerDiv.appendChild(separatorText);
+	outerDiv.appendChild(balanceSpan);
+
+	// Append the outer div to the container
+	container.appendChild(outerDiv);
 
 	el.appendChild(container);
 

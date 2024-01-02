@@ -287,7 +287,7 @@ export class ControllerAnalyzer {
 
 	filterByLimit(
 		transactions: Transaction[],
-		operator: "first" | "last",
+		operator: string,
 		limit: number
 	): Transaction[] {
 		if (limit <= 0) {
@@ -312,6 +312,10 @@ export class ControllerAnalyzer {
 				const valueA = this.getSortValue(a, criteria.value);
 				const valueB = this.getSortValue(b, criteria.value);
 
+				if (valueA === null || valueB === null) {
+					return 0;
+				}
+
 				if (valueA < valueB) {
 					return criteria.operator === "asc" ? -1 : 1;
 				} else if (valueA > valueB) {
@@ -323,7 +327,10 @@ export class ControllerAnalyzer {
 		});
 	}
 
-	private getSortValue(transaction: Transaction, field: string): any {
+	private getSortValue(
+		transaction: Transaction,
+		field: string
+	): number | null {
 		switch (field) {
 			case "date":
 				return transaction.date.getTime();

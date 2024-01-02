@@ -1,3 +1,4 @@
+import { IterationNode } from "ohm-js";
 import {
 	BalanceQuery,
 	Exclude,
@@ -9,8 +10,10 @@ import grammar from "./ptaLangGrammar/ptaLangGrammar.ohm-bundle";
 export const parser = (code: string) => {
 	const semantics = grammar.createSemantics();
 
-	const getFromIterationNode = (node: any): any => {
-		let parsedNode = node.children.map((c: any) => c.parse());
+	const getFromIterationNode = <T>(
+		node: IterationNode
+	): T | undefined | null => {
+		let parsedNode: any = node.children.map((c) => c.parse());
 		if (parsedNode.length) {
 			parsedNode = parsedNode[0];
 		}
@@ -38,15 +41,15 @@ export const parser = (code: string) => {
 		FilterClause(filterKey, operator, identifier) {
 			return new Filter(
 				filterKey.parse(),
-				getFromIterationNode(operator),
-				getFromIterationNode(identifier)
+				getFromIterationNode<string>(operator) || "",
+				getFromIterationNode<string>(identifier) || ""
 			);
 		},
 		ExcludeClause(keyword, excludeKey, operator, identifier) {
 			return new Exclude(
 				excludeKey.parse(),
-				getFromIterationNode(operator),
-				getFromIterationNode(identifier)
+				getFromIterationNode<string>(operator) || "",
+				getFromIterationNode<string>(identifier) || ""
 			);
 		},
 		identifier(arg0) {

@@ -1,3 +1,4 @@
+import { IterationNode } from "ohm-js";
 import { Controller } from "src/models/controller";
 import {
 	RecEvent,
@@ -12,12 +13,11 @@ export const parser = (code: string) => {
 
 	const semantics = grammar.createSemantics();
 
-	const getFromIterationNode = (node: any): any => {
-		let parsedNode = node.children.map((c: any) => c.parse());
+	const getFromIterationNode = <T>(node: IterationNode): T | undefined => {
+		// /skip - this makes sense logically
+		let parsedNode: any = node.children.map((c) => c.parse());
 		if (parsedNode.length) {
 			parsedNode = parsedNode[0];
-		} else {
-			parsedNode = undefined;
 		}
 		return parsedNode;
 	};
@@ -42,7 +42,7 @@ export const parser = (code: string) => {
 			return new Transaction(
 				date.parse(),
 				description.parse(),
-				entry.children.map((c: any) => c.parse())
+				entry.children.map((c) => c.parse())
 			);
 		},
 		Recurring(date, key, repeatClause, description, entry) {
@@ -50,7 +50,7 @@ export const parser = (code: string) => {
 				date.parse(),
 				repeatClause.parse(),
 				description.parse(),
-				entry.children.map((c: any) => c.parse())
+				entry.children.map((c) => c.parse())
 			);
 		},
 		RecEvent(date, key, description) {
@@ -60,7 +60,7 @@ export const parser = (code: string) => {
 		},
 		RepeatClause(interval, frequency, end) {
 			return new RepeatClause(
-				getFromIterationNode(interval),
+				getFromIterationNode<string>(interval),
 				frequency.sourceString,
 				getFromIterationNode(end)
 			);
@@ -72,14 +72,17 @@ export const parser = (code: string) => {
 			return body.sourceString;
 		},
 		Entry(account, price) {
-			let parsedPrice = getFromIterationNode(price);
-			const { amount, currency } = (parsedPrice as any) ?? {};
+			let parsedPrice = getFromIterationNode<{
+				amount: number;
+				currency: string;
+			}>(price);
+			const { amount, currency } = parsedPrice ?? {};
 			return new Entry(account.parse(), amount, currency);
 		},
 		Account(mainAccount, subAccount) {
 			return (
 				mainAccount.sourceString +
-				subAccount.children.map((s: any) => s.sourceString).join("")
+				subAccount.children.map((s) => s.sourceString).join("")
 			);
 		},
 		price(amount, currency) {

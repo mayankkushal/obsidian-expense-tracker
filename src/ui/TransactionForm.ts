@@ -1,4 +1,4 @@
-import { AbstractInputSuggest } from "obsidian";
+import { AbstractInputSuggest, App } from "obsidian";
 import { Controller } from "src/models/controller";
 import { Button } from "./Button";
 import { CheckboxContainer } from "./Checkbox";
@@ -9,7 +9,7 @@ export class AccountSuggest extends AbstractInputSuggest<string> {
 	controller: Controller;
 
 	constructor(
-		app: any,
+		app: App,
 		textInputEl: HTMLInputElement,
 		controller: Controller
 	) {
@@ -40,7 +40,7 @@ export class DescriptionSuggest extends AbstractInputSuggest<string> {
 	controller: Controller;
 
 	constructor(
-		app: any,
+		app: App,
 		textInputEl: HTMLInputElement,
 		controller: Controller
 	) {
@@ -69,7 +69,7 @@ export class DescriptionSuggest extends AbstractInputSuggest<string> {
 export function createTransactionForm(
 	el: HTMLElement,
 	onSubmit: Function,
-	app: any,
+	app: App,
 	controller: Controller
 ): void {
 	const container = document.createElement("div");
@@ -120,7 +120,7 @@ export function createTransactionForm(
 }
 
 function createGeneralForm(
-	app: any,
+	app: App,
 	controller: Controller,
 	onSubmit: Function
 ) {
@@ -342,7 +342,7 @@ function createGeneralForm(
 
 function createAdvanceForm(
 	formsContainer: HTMLDivElement,
-	app: any,
+	app: App,
 	controller: Controller,
 	onSubmit: Function
 ) {

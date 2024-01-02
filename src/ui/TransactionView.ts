@@ -86,20 +86,22 @@ export function createTransactionTable(
 		);
 
 		// Determine if there are multiple accounts for "To Account"
-		toAccountCell.innerHTML = !positiveEntries.length
-			? ""
-			: positiveEntries.length > 1
-			? "Multiple accounts"
-			: formatAccountName(positiveEntries[0]?.accountName) ||
-			  "Multiple accounts";
+		if (!positiveEntries.length) {
+			toAccountCell.textContent = "";
+		} else if (positiveEntries.length > 1) {
+			toAccountCell.textContent = "Multiple accounts";
+		} else {
+			formatAccountName(toAccountCell, positiveEntries[0]?.accountName);
+		}
 
 		// Determine if there are multiple accounts for "From Account"
-		fromAccountCell.innerHTML = !negativeEntries.length
-			? ""
-			: negativeEntries.length > 1
-			? "Multiple accounts"
-			: formatAccountName(negativeEntries[0]?.accountName) ||
-			  "Multiple accounts";
+		if (!negativeEntries.length) {
+			fromAccountCell.textContent = "";
+		} else if (negativeEntries.length > 1) {
+			fromAccountCell.textContent = "Multiple accounts";
+		} else {
+			formatAccountName(fromAccountCell, negativeEntries[0]?.accountName);
+		}
 
 		// Display the total amount
 		totalCell.textContent =
@@ -165,9 +167,20 @@ export function createNestedTransactionList(
 		header.appendChild(dateDescription);
 
 		const total = document.createElement("div");
-		total.innerHTML = `Total: <span class="font-bold">${
-			formatCurrency(transaction.toTotal, currency) || ""
-		}</span>`;
+
+		// Create the "Total:" text
+		const totalText = document.createElement("span");
+		totalText.textContent = "Total: ";
+
+		// Create the formatted currency span
+		const formattedCurrency = document.createElement("span");
+		formattedCurrency.classList.add("font-bold");
+		formattedCurrency.textContent =
+			formatCurrency(transaction.toTotal, currency) || "";
+
+		// Append the created elements to the total element
+		total.appendChild(totalText);
+		total.appendChild(formattedCurrency);
 		header.appendChild(total);
 
 		li.appendChild(header);
@@ -178,7 +191,6 @@ export function createNestedTransactionList(
 		transaction.entries.forEach((entry) => {
 			const entryLi = document.createElement("li");
 
-			const formattedAccountName = formatAccountName(entry.accountName);
 			const amountColor =
 				entry.amount! > 0
 					? "text-green-400"
@@ -186,13 +198,21 @@ export function createNestedTransactionList(
 					? "text-red-400"
 					: "inherit";
 
-			// Create HTML with styled amounts
-			const formattedAmount = `<span class="font-bold ${amountColor}">${formatCurrency(
+			// Create DOM elements for the account name, amount, and currency
+			const accountNameSpan = document.createElement("span");
+			formatAccountName(accountNameSpan, entry.accountName);
+
+			const amountSpan = document.createElement("span");
+			amountSpan.classList.add("font-bold", amountColor);
+			amountSpan.textContent = formatCurrency(
 				entry.amount ?? 0,
 				currency
-			)}</span>`;
+			);
 
-			entryLi.innerHTML = `${formattedAccountName} : ${formattedAmount}`;
+			// Append the created elements to the entryLi element
+			entryLi.appendChild(accountNameSpan);
+			entryLi.appendChild(document.createTextNode(": ")); // Add space between account name and amount
+			entryLi.appendChild(amountSpan);
 			entriesList.appendChild(entryLi);
 		});
 
