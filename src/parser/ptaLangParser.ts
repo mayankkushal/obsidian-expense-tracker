@@ -1,4 +1,9 @@
-import { BalanceQuery, Filter, TransactionQuery } from "src/models/query";
+import {
+	BalanceQuery,
+	Exclude,
+	Filter,
+	TransactionQuery,
+} from "src/models/query";
 import grammar from "./ptaLangGrammar/ptaLangGrammar.ohm-bundle";
 
 export const parser = (code: string) => {
@@ -13,15 +18,17 @@ export const parser = (code: string) => {
 	};
 
 	semantics.addOperation("parse()", {
-		Query(selectKey, filters): any {
+		Query(selectKey, filters, excludes): any {
 			switch (selectKey.parse()) {
 				case "balance":
 					return new BalanceQuery(
-						filters.children.map((c: any) => c.parse())
+						filters.children.map((c: any) => c.parse()),
+						excludes.children.map((c: any) => c.parse())
 					);
 				case "transaction":
 					return new TransactionQuery(
-						filters.children.map((c: any) => c.parse())
+						filters.children.map((c: any) => c.parse()),
+						excludes.children.map((c: any) => c.parse())
 					);
 			}
 		},
@@ -31,6 +38,13 @@ export const parser = (code: string) => {
 		FilterClause(filterKey, operator, identifier) {
 			return new Filter(
 				filterKey.parse(),
+				getFromIterationNode(operator),
+				getFromIterationNode(identifier)
+			);
+		},
+		ExcludeClause(keyword, excludeKey, operator, identifier) {
+			return new Exclude(
+				excludeKey.parse(),
 				getFromIterationNode(operator),
 				getFromIterationNode(identifier)
 			);

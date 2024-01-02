@@ -122,7 +122,7 @@ Expense Tracker offers two convenient ways to record your transactions:
 ### Structure and Syntax
 
 ```
-selectKey filterClause*
+selectKey filterClause* excludeClause*
 ```
 
 - selectKey: Defines the desired output. Choose balance to explore account balances, or transaction to delve into transaction details.
@@ -130,9 +130,14 @@ selectKey filterClause*
   - filterKey: Identifies the aspect to filter (e.g., account, date, structure).
   - operator: 
   - value: Provides the details to compare against. Allowed values differ for each filterKey.
+- excludeClause (optional, multiple allowed): Excludes data based on specific criteria. Each clause consists of:
+  - keyword: `exclude`
+  - excludeKey: Identifies the aspect to exclude (e.g., account, date, description).
+  - operator:
+  - value: Provides the details to compare against. Allowed values differ for each excludeKey.
 
 
-#### Valid filers for balance query:
+#### Valid filters for balance query:
 
 | Filter Key | Operator      | Value                                    |
 |------------|---------------|------------------------------------------|
@@ -143,7 +148,7 @@ selectKey filterClause*
 | hide       |               | creationDate, path                       |
 
 
-#### Valid filers for transaction query:
+#### Valid filters for transaction query:
 
 | Filter Key | Operator      | Value                                    |
 |------------|---------------|------------------------------------------|
@@ -155,8 +160,21 @@ selectKey filterClause*
 | order      | asc, desc     | amount, date                             |
 | hide       |               | total                                    |
 
+#### Valid excludes for transaction query:
+
+| Exclude Key | Operator      | Value                                    |
+|-------------|---------------|------------------------------------------|
+| account    |               | Regex of account name ex: Expense:Food.* |
+| date       | last, current | day, week, month, year                   |
+| date       | range | 2024-01-01,2024-01-31 (date separated by comma)  |
+| description    |               | Regex of description ex: .\*salary.\* |
+
+
 > [!NOTE]
 > Required keys are marked with *
+
+> [!TIP]
+> Check developer console for any errors. `View > Toggle Developer Tools`
 
 ### Examples
 
@@ -188,6 +206,10 @@ structure nested
 order asc date
 order desc amount
 limit last 5
+exclude description .*salary.*
 ```
 ````
-This gives the last 5 transactions in a nested structure, sorted by date in ascending order and amount in the descending order
+This gives the last 5 transactions in a nested structure, sorted by date in ascending order and amount in the descending order excluding all transactions with salary in them.
+
+> [!NOTE]
+> Exclude clause should be added after all the filter clauses

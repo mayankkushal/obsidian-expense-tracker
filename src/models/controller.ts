@@ -1,5 +1,5 @@
 import { AccountHierarchy } from "./account";
-import { Filter } from "./query";
+import { Exclude, Filter } from "./query";
 import { RecEvent, RecurringTransaction } from "./recurring";
 import { Transaction } from "./transaction";
 
@@ -108,6 +108,42 @@ export class ControllerAnalyzer {
 		return filteredTransactions;
 	}
 
+	exclude({
+		transactions,
+		account,
+		description,
+		startDate,
+		endDate,
+	}: {
+		transactions?: Transaction[];
+		account?: string;
+		description?: Exclude;
+		startDate?: Date;
+		endDate?: Date;
+	}) {
+		if (!transactions) {
+			transactions = this.controller.getTransactions();
+		}
+
+		if (account) {
+			transactions = this.excludeByAccount(account, transactions);
+		}
+
+		if (description) {
+			transactions = this.excludeByDescription(description, transactions);
+		}
+
+		if (startDate && endDate) {
+			transactions = this.excludeByDateRange(
+				startDate,
+				endDate,
+				transactions
+			);
+		}
+
+		return transactions;
+	}
+
 	isAll(accountName: string) {
 		return accountName === "*" || accountName === "all";
 	}
@@ -175,6 +211,35 @@ export class ControllerAnalyzer {
 		return Array.from(finalTransactions);
 	}
 
+	excludeByAccount(
+		accountName: string,
+		transactions?: Transaction[]
+	): Transaction[] {
+		const workingTransactions =
+			transactions || this.controller.getTransactions() || [];
+		const accountRegex = new RegExp(accountName);
+
+		return workingTransactions.filter((transaction) => {
+			const hasMatchingAccount = transaction.entries.some((entry) =>
+				accountRegex.test(entry.accountName)
+			);
+			return !hasMatchingAccount;
+		});
+	}
+
+	excludeByDescription(
+		description: Exclude,
+		transactions?: Transaction[]
+	): Transaction[] {
+		const workingTransactions =
+			transactions || this.controller.getTransactions() || [];
+		const accountRegex = new RegExp(description.value);
+
+		return workingTransactions.filter(
+			(transaction) => !accountRegex.test(transaction.description || "")
+		);
+	}
+
 	filterByDateRange(
 		startDate: Date,
 		endDate: Date,
@@ -186,6 +251,20 @@ export class ControllerAnalyzer {
 		return workingTransactions.filter(
 			(transaction) =>
 				transaction.date >= startDate && transaction.date <= endDate
+		);
+	}
+
+	excludeByDateRange(
+		startDate: Date,
+		endDate: Date,
+		transactions?: Transaction[]
+	): Transaction[] {
+		const workingTransactions =
+			transactions || this.controller.getTransactions() || [];
+
+		return workingTransactions.filter(
+			(transaction) =>
+				transaction.date <= startDate || transaction.date >= endDate
 		);
 	}
 

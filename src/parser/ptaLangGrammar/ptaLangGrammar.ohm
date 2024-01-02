@@ -1,47 +1,51 @@
 PTALang {
-	Query = SelectKey FilterClause*
+	Query = SelectKey FilterClause* ExcludeClause*
     
     FilterClause = FilterKey Operator? identifier?
+    ExcludeClause = EXCLUDE ExcludeKey Operator? identifier?
     
     SelectKey = BALANCE | TRANSACTION
     FilterKey = ACCOUNT | DATE | STRUCTURE | LIMIT | ORDER | HIDE
+    ExcludeKey = ACCOUNT | DATE | DESCRIPTION
     
     Operator = eq | lt | gt | lte | gte | neq | multiple | exclude | current | last | first | desc | asc | range
     
     BALANCE     = "balance"
-  TRANSACTION = "transaction"
-  AND         = "and"
-  OR          = "or"
-  ACCOUNT = "account"
-  DATE = "date"
-  STRUCTURE = "structure"
-  LIMIT = "limit"
-  ORDER = "order"
-  HIDE = "hide"
-  // Identifier (table or column names)
-  identifier  = (~newline any)*
-  // Literals
-  string      = "\"" (~"\"" any)* "\""
-  number      = digit+
-  // Operators
-  eq          = "="
-  neq         = "!="
-  lt          = "<"
-  gt          = ">"
-  lte         = "<="
-  gte         = ">="
-  multiple    = "multiple"
-  exclude     = "exclude"
-  current     = "current"
-  last        = "last"
-  first       = "first"
-  range       = "range"
-  desc        = "desc"
-  asc         = "asc"
-  // Punctuation
-  comma       = ","
-  colon       = ":"
-  semicolon   = ";"
-  newline     = "\n"
+    TRANSACTION = "transaction"
+    AND         = "and"
+    OR          = "or"
+    ACCOUNT = "account"
+    DATE = "date"
+    STRUCTURE = "structure"
+    LIMIT = "limit"
+    ORDER = "order"
+    HIDE = "hide"
+    DESCRIPTION = "description"
+    EXCLUDE = "exclude"
+    // Identifier (table or column names)
+    identifier  = (~newline any)*
+    // Literals
+    string      = "\"" (~"\"" any)* "\""
+    number      = digit+
+    // Operators
+    eq          = "="
+    neq         = "!="
+    lt          = "<"
+    gt          = ">"
+    lte         = "<="
+    gte         = ">="
+    multiple    = "multiple"
+    exclude     = "exclude"
+    current     = "current"
+    last        = "last"
+    first       = "first"
+    range       = "range"
+    desc        = "desc"
+    asc         = "asc"
+    // Punctuation
+    comma       = ","
+    colon       = ":"
+    semicolon   = ";"
+    newline     = "\n"
 
 }

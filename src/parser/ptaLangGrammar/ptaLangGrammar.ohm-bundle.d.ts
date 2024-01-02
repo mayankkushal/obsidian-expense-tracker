@@ -12,10 +12,12 @@ import {
 } from 'ohm-js';
 
 export interface PTALangActionDict<T> extends BaseActionDict<T> {
-  Query?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
+  Query?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode, arg2: IterationNode) => T;
   FilterClause?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode, arg2: IterationNode) => T;
+  ExcludeClause?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: IterationNode, arg3: IterationNode) => T;
   SelectKey?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   FilterKey?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  ExcludeKey?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   Operator?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   BALANCE?: (this: NonterminalNode, arg0: TerminalNode) => T;
   TRANSACTION?: (this: NonterminalNode, arg0: TerminalNode) => T;
@@ -27,6 +29,8 @@ export interface PTALangActionDict<T> extends BaseActionDict<T> {
   LIMIT?: (this: NonterminalNode, arg0: TerminalNode) => T;
   ORDER?: (this: NonterminalNode, arg0: TerminalNode) => T;
   HIDE?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  DESCRIPTION?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  EXCLUDE?: (this: NonterminalNode, arg0: TerminalNode) => T;
   identifier?: (this: NonterminalNode, arg0: IterationNode) => T;
   string?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode, arg2: TerminalNode) => T;
   number?: (this: NonterminalNode, arg0: IterationNode) => T;

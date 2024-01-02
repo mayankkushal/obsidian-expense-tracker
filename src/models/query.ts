@@ -16,13 +16,17 @@ export class Filter {
 	}
 }
 
+export class Exclude extends Filter {}
+
 class Query {
 	controller: Controller;
 	analyzer: ControllerAnalyzer;
 	filters: Filter[];
+	excludes: Exclude[];
 
-	constructor(filters: Filter[]) {
+	constructor(filters: Filter[] = [], excludes: Exclude[] = []) {
 		this.filters = filters;
+		this.excludes = excludes;
 	}
 
 	setController(controller: Controller) {
@@ -48,6 +52,10 @@ class Query {
 	 */
 	getFilters(key: string): Array<Filter> {
 		return this.filters.filter((f) => f.key === key);
+	}
+
+	getExclude(key: string) {
+		return this.excludes.find((f) => f.key === key);
 	}
 
 	/**
@@ -140,13 +148,9 @@ export class BalanceQuery extends Query {
 }
 
 export class TransactionQuery extends Query {
-	execute(el: HTMLElement, plugin: PtaPlugin) {
+	buildFilters() {
 		const accountName = this.getFilter("account");
 		const date = this.getFilter("date");
-		const structure = this.getFilter("structure");
-		const limit = this.getFilter("limit");
-		const orders = this.getFilters("order");
-		const hides = this.getFilters("hide");
 
 		let filters: any = {};
 
@@ -157,7 +161,37 @@ export class TransactionQuery extends Query {
 			filters = { ...filters, startDate, endDate };
 		}
 
+		return filters;
+	}
+
+	buildExcludes() {
+		const account = this.getExclude("account");
+		const date = this.getExclude("date");
+		const description = this.getExclude("description");
+
+		let excludes: { [key: string]: any } = { account, description };
+
+		if (date) {
+			const [startDate, endDate] = this.getDateRange(date);
+			excludes = { ...excludes, startDate, endDate };
+		}
+
+		return excludes;
+	}
+
+	execute(el: HTMLElement, plugin: PtaPlugin) {
+		const structure = this.getFilter("structure");
+
+		const limit = this.getFilter("limit");
+		const orders = this.getFilters("order");
+		const hides = this.getFilters("hide");
+
+		const filters = this.buildFilters();
+		const excludes = this.buildExcludes();
+
 		let transactions = this.analyzer.filter(filters);
+
+		transactions = this.analyzer.exclude({ transactions, ...excludes });
 
 		if (orders.length) {
 			transactions = this.analyzer.orderByFields(transactions, orders);
