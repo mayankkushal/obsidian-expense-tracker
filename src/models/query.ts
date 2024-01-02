@@ -74,6 +74,12 @@ class Query {
 					.subtract(1, filter.value as any)
 					.endOf(filter.value as any);
 				break;
+			case "range":
+				let [startDateStr, endDateStr] = filter.value.split(",");
+				// convert str to date, expected format is YYYY-MM-DD
+				startDate = moment(startDateStr, "YYYY-MM-DD");
+				endDate = moment(endDateStr, "YYYY-MM-DD");
+				break;
 			default:
 				throw new Error("Invalid operator");
 		}

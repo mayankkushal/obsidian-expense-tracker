@@ -136,13 +136,12 @@ selectKey filterClause*
 
 | Filter Key | Operator      | Value                                    |
 |------------|---------------|------------------------------------------|
-| account    |               | Regex of account name ex: Expense:Food.* |
+| account*    |               | Regex of account name ex: Expense:Food.* |
 | date       | last, current | day, week, month, year                   |
+| date       | range | 2024-01-01,2024-01-31 (date separated by comma)  |
 | structure  |               | flat, nested                             |
 | hide       |               | creationDate, path                       |
 
-> [!NOTE]
-> account is required for balance queries
 
 #### Valid filers for transaction query:
 
@@ -150,10 +149,14 @@ selectKey filterClause*
 |------------|---------------|------------------------------------------|
 | account    |               | Regex of account name ex: Expense:Food.* |
 | date       | last, current | day, week, month, year                   |
+| date       | range | 2024-01-01,2024-01-31 (date separated by comma)  |
 | structure  |               | flat, nested                             |
-| limit      | first, last   | <number>                                 |
+| limit      | first, last   | \<number\>                                 |
 | order      | asc, desc     | amount, date                             |
 | hide       |               | total                                    |
+
+> [!NOTE]
+> Required keys are marked with *
 
 ### Examples
 

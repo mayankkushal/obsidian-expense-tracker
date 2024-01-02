@@ -41,6 +41,7 @@ export interface PTALangActionDict<T> extends BaseActionDict<T> {
   current?: (this: NonterminalNode, arg0: TerminalNode) => T;
   last?: (this: NonterminalNode, arg0: TerminalNode) => T;
   first?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  range?: (this: NonterminalNode, arg0: TerminalNode) => T;
   desc?: (this: NonterminalNode, arg0: TerminalNode) => T;
   asc?: (this: NonterminalNode, arg0: TerminalNode) => T;
   comma?: (this: NonterminalNode, arg0: TerminalNode) => T;

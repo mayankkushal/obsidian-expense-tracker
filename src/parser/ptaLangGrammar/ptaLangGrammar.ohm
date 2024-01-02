@@ -6,7 +6,7 @@ PTALang {
     SelectKey = BALANCE | TRANSACTION
     FilterKey = ACCOUNT | DATE | STRUCTURE | LIMIT | ORDER | HIDE
     
-    Operator = eq | lt | gt | lte | gte | neq | multiple | exclude | current | last | first | desc | asc
+    Operator = eq | lt | gt | lte | gte | neq | multiple | exclude | current | last | first | desc | asc | range
     
     BALANCE     = "balance"
   TRANSACTION = "transaction"
@@ -35,6 +35,7 @@ PTALang {
   current     = "current"
   last        = "last"
   first       = "first"
+  range       = "range"
   desc        = "desc"
   asc         = "asc"
   // Punctuation
